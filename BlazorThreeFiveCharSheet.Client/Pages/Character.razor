@@ -1,0 +1,761 @@
+﻿@page "/Character"
+@rendermode InteractiveWebAssembly
+<PageTitle>Character Sheet</PageTitle>
+<div style="width: 100%" class=" container border border-2">
+    <InputRadioGroup Name="Info"  @bind-Value="model.showInfo" @bind-Value:after=logging>
+        <div class="row">
+        @foreach(var opt in model.showInfoValues.Keys)
+        {
+            <div class="col boader board-1">
+                <label>@model.showInfoValues[opt]</label>
+                <InputRadio TValue="string" Value="@opt" Name="Info"></InputRadio>
+                
+            </div>
+        }
+        </div>
+    </InputRadioGroup>
+</div>
+<div style="width: 100%" class=" container border border-2">
+    @if (model.showInfo == "ALL" || model.showInfo == "CharData")
+    {
+        <div class="row">
+            <div class="row">
+                <div class="row justify-content-start">
+                    <div class="col-6">
+                        <div class="form-floating">
+                            <InputText @bind-Value="model.characterName" class="form-control" id="charNamne"></InputText>
+                            <label for="charNamne">Character Name</label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-floating">
+                            <InputText @bind-Value="model.player" class="form-control" id="player"></InputText>
+                            <label for="charNamne">player</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="row justify-content-start">
+                    <div class="col-3">
+                        <div class="form-floating">
+                            <InputText @bind-Value="model.classLvlString" id="ClassLVL" class="form-control"></InputText>
+                            <label for="ClassLVL">Class And Level</label>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="form-floating">
+                            <InputSelect class="form-select" @bind-Value="model.race" @bind-Value:after=AlterStatsRace id="race">
+                                <option value=""></option>
+                                <option value="HUM">Human</option>
+                                <option value="ELF">Elf</option>
+                                <option value="DWF">Dwarf</option>
+                                <option value="GNO">Gnome</option>
+                                <option value="HEL">Half Elf</option>
+                                <option value="HOR">Half-Orc</option>
+                                <option value="HAF">Halflings</option>
+                            </InputSelect>
+                            <label for="race">Race</label>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="form-floating">
+                            <InputSelect class="form-select" @bind-Value="model.alignment" id="alignment">
+                                <option value=""></option>
+                                <option value="LG">Lawfull-Good</option>
+                                <option value="LN">Lawfull-Neutral</option>
+                                <option value="LE">LawFull-Evil</option>
+                                <option value="NG">Neutral-Good</option>
+                                <option value="TN">Neutral</option>
+                                <option value="NE">Neutral-Evil</option>
+                                <option value="CG">Chaotic-Good</option>
+                                <option value="CG">Chaotic-Neutral</option>
+                                <option value="CG">Chaotic-Evil</option>
+                            </InputSelect>
+                            <label for="alignment">Alignment</label>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="form-floating">
+                            <InputText @bind-Value="model.deity" id="deity" class="form-control"></InputText>
+                            <label for="deity">Deity</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="form-floating">
+                        <InputSelect class="form-select" @bind-Value="model.size" id="size">
+                            <option value=""></option>
+                            <option value="S">Small</option>
+                            <option value="M">Medium</option>
+                            <option value="L">Large</option>
+                            <option value="O">Other</option>
+                        </InputSelect>
+                        <label for="size">Size</label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating">
+                        <InputNumber @bind-Value="model.age" id="age" class="form-control"></InputNumber>
+                        <label for="age">Age</label>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="form-floating">
+                        <InputSelect class="form-select" @bind-Value="model.gender" id="gender">
+                            <option value=""></option>
+                            <option value="M">Male</option>
+                            <option value="F">Female</option>
+                            <option value="O">Other</option>
+                        </InputSelect>
+                        <label for="gender">Gender</label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating">
+                        <InputText @bind-Value="model.height" id="height" class="form-control"></InputText>
+                        <label for="height">Height</label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating">
+                        <InputText @bind-Value="model.eyes" id="eyes" class="form-control"></InputText>
+                        <label for="eyes">Eyes</label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating">
+                        <InputText @bind-Value="model.hair" id="hair" class="form-control"></InputText>
+                        <label for="hair">Hair</label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating">
+                        <InputText @bind-Value="model.skin" id="skin" class="form-control"></InputText>
+                        <label for="skin">Skin</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br /><br />
+    }
+  
+    <div class="row">
+        @if (model.showInfo == "ALL" || model.showInfo == "Stats")
+        {
+            <div class="col-2">
+                <div class="form-floating">
+                    <InputNumber class="form-control" TValue="int" @bind-Value="model.str" @bind-Value:after=CalculateModifier></InputNumber>
+                    <label for="str">Strength (@model.strMod)</label>
+                </div>
+                <div class="form-floating">
+                    <InputNumber @bind-Value="model.dex" @bind-Value:after=CalculateModifier id="dex" class="form-control">></InputNumber>
+                    <label for="dex">Dexterity (@model.dexMod)</label>
+                </div>
+                <div class="form-floating">
+                    <InputNumber @bind-Value="model.con" @bind-Value:after=CalculateModifier id="con" class="form-control"></InputNumber>
+                    <label for="con">Constitution (@model.conMod)</label>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="form-floating">
+                    <InputNumber class="form-control" @bind-Value="model.tempStr" @bind-Value:after=CalculateModifier></InputNumber>
+                    <label for="tempStr">Temp Strength (@model.tempStrMod)</label>
+                </div>
+                <div class="form-floating">
+                    <InputNumber @bind-Value="model.tempDex" @bind-Value:after=CalculateModifier id="dex" class="form-control">></InputNumber>
+                    <label for="dex">Temp Dexterity (@model.tempDexMod)</label>
+                </div>
+                <div class="form-floating">
+                    <InputNumber @bind-Value="model.tempCon" @bind-Value:after=CalculateModifier id="con" class="form-control"></InputNumber>
+                    <label for="con">Temp Con (@model.tempConMod)</label>
+                </div>
+            </div>
+        }
+        @if (model.showInfo == "ALL" || model.showInfo == "HPAC")
+        {
+                <div class="col-6">
+                    <div class="row flex-nowrap">
+                    <div class="col-2">
+                        <div class="form-floating">
+                            <InputNumber class="form-control" @bind-Value="model.maxHP"></InputNumber>
+                            <label>Max HP</label>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <div class="form-floating">
+                            <InputNumber class="form-control" @bind-Value="model.currentHP"></InputNumber>
+                            <label>HP</label>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="form-floating">
+                            <InputNumber class="form-control" @bind-Value="model.nonLethalDmg"></InputNumber>
+                            <label>Non-Lethal</label>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <div class="form-floating">
+                            <InputText class="form-control" @bind-Value="model.speed"></InputText>
+                            <label>Speed</label>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="form-floating">
+                            <InputText class="form-control" @bind-Value="model.dmgRedutions"></InputText>
+                            <label>Damage Reduction</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row flex-nowrap">
+                    <div class="col-2">
+                        <div class="form-floating">
+                            <InputNumber class="form-control readonly" @bind-Value="model.acTotal" readonly disabled></InputNumber>
+                            <label>AC</label>
+                        </div>
+                    </div>
+                    <div class="col-1 px-0 mx-0">
+                        <div class="form-floating">
+                            <input class="form-control readonly p-1" type="text" readonly  value="=10+" />
+                        </div>
+                    </div>
+                    <div class="col-2 px-1">
+                        <div class="form-floating">
+                            <InputNumber class="form-control " @bind-Value="model.acArmor" @bind-Value:after=TotalAC></InputNumber>
+                            <label>Armor</label>
+                        </div>
+                    </div>
+                    <div class="col-2 px-1">
+                        <div class="form-floating">
+                            <InputNumber class="form-control" @bind-Value="model.acShield" @bind-Value:after=TotalAC></InputNumber>
+                            <label>Shield</label>
+                        </div>
+                    </div>
+                    <div class="col-2 px-1">
+                        <div class="form-floating">
+                            <InputNumber class="form-control " readonly @bind-Value="model.dexMod" @bind-Value:after=TotalAC></InputNumber>
+                            <label>Dex</label>
+                        </div>
+                    </div>
+                    <div class="col-2 px-1">
+                        <div class="form-floating">
+                            <InputNumber class="form-control "  @bind-Value="model.acSizeMod" @bind-Value:after=TotalAC></InputNumber>
+                            <label>Size Mod</label>
+                        </div>
+                    </div>
+                    <div class="col-2 px-1">
+                        <div class="form-floating">
+                            <InputNumber class="form-control "  @bind-Value="model.acNat" @bind-Value:after=TotalAC></InputNumber>
+                            <label>Natural</label>
+                        </div>
+                    </div>
+                    <div class="col-2 px-1">
+                        <div class="form-floating">
+                            <InputNumber class="form-control "  @bind-Value="model.acDeflection" @bind-Value:after=TotalAC></InputNumber>
+                            <label>Defletection</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        
+    </div>
+
+
+    <div class="row">
+        @if (model.showInfo == "ALL" || model.showInfo == "Stats")
+        {
+            <div class="col-2">
+                <div class="form-floating">
+                <InputNumber class="form-control" @bind-Value="model.wis" @bind-Value:after=CalculateModifier></InputNumber>
+                <label for="wis">Wisdom (@model.wisMod)</label>
+            </div>
+            <div class="form-floating">
+                <InputNumber @bind-Value="model.intel" @bind-Value:after=CalculateModifier id="int" class="form-control">></InputNumber>
+                <label for="int">Intelligence (@model.intMod)</label>
+            </div>
+            <div class="form-floating">
+                <InputNumber @bind-Value="model.cha" @bind-Value:after=CalculateModifier id="cha" class="form-control"></InputNumber>
+                <label for="Cha">Charisma (@model.chaMod)</label>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-floating">
+                <InputNumber class="form-control" @bind-Value="model.tempWis" @bind-Value:after=CalculateModifier></InputNumber>
+                <label for="wis">Temp Wisdom (@model.tempWisMod)</label>
+            </div>
+            <div class="form-floating">
+                <InputNumber @bind-Value="model.tempIntel" @bind-Value:after=CalculateModifier id="int" class="form-control">></InputNumber>
+                <label for="int">Temp Intelligence (@model.tempIntMod)</label>
+            </div>
+            <div class="form-floating">
+                <InputNumber @bind-Value="model.tempCha" @bind-Value:after=CalculateModifier id="cha" class="form-control"></InputNumber>
+                <label for="Cha">Temp Charisma (@model.tempChaMod)</label>
+            </div>
+        </div>
+        }
+                @if (model.showInfo == "ALL" || model.showInfo == "HPAC")
+        {
+            <div class="col-2">
+                <div class="form-floating">
+                <InputNumber class="form-control" @bind-Value="model.acTouch" readonly disabled></InputNumber>
+                <label>Touch AC</label>
+                </div>
+            <div class="form-floating">
+                <InputNumber class="form-control" @bind-Value="model.acFF" readonly disabled></InputNumber>
+                <label>Flat-Footed AC</label>
+            </div>
+            <div class="form-floating">
+                <InputNumber class="form-control" @bind-Value="model.init" readonly disabled></InputNumber>
+                <label>Initiative</label>
+            </div>
+        </div>
+        }
+    </div>
+            @if (model.showInfo == "ALL" || model.showInfo == "Saves")
+    {
+            <br />
+            <div class="row justify-content-start flex-nowrap">
+                <div class="col-2 my-auto">
+                    <p class="text-center">Saving Throws</p>
+                </div>
+                <div class="col-1 my-auto" >
+                    <p class ="text-center">Total</p>
+                </div>
+                <div class="col-1 my-auto">
+                    <p class="text-center">Base Save</p>
+                </div>
+                <div class="col-1 my-auto">
+                    <p class="text-center">Ability Mod</p>
+                </div>
+                <div class="col-1 my-auto">
+                    <p class="text-center">Magic Mod</p>
+                </div>
+                <div class="col-1 my-auto">
+                    <p class="text-center">Misc. Mod</p>
+                </div>
+                <div class="col-1 my-auto">
+                    <p class="text-center">Temp Mod</p>
+                </div>
+            </div>
+
+            <div class="row justify-content-start flex-nowrap">
+            <div class="col-2 my-auto">
+                <!--<p class="text-light my-auto">Fortitude</p>-->
+                <input type="text" class="form-control bg-dark text-light my-auto" style="text-align:center" value="Fortitude" readonly disabled>
+            </div>
+            <div class="col-1 my-auto">
+                <InputNumber @bind-Value="model.fortTotal" readonly disabled class="form-control" ></InputNumber> 
+            </div>
+            <div class="col-1">
+                <InputNumber @bind-Value="model.fortBase" @bind-Value:after=CalcSaves class="form-control"></InputNumber>
+            </div>
+            <div class="col-1">
+                <InputNumber @bind-Value="model.conMod" @bind-Value:after=CalcSaves class="form-control"></InputNumber>
+            </div>
+            <div class="col-1">
+                <InputNumber @bind-Value="model.fortMagicMod" @bind-Value:after=CalcSaves class="form-control"></InputNumber>
+            </div>
+            <div class="col-1">
+                <InputNumber @bind-Value="model.fortMiscMod" @bind-Value:after=CalcSaves class="form-control"></InputNumber>
+            </div>
+            <div class="col-1">
+                <InputNumber @bind-Value="model.fortTempMod" @bind-Value:after=CalcSaves class="form-control"></InputNumber>
+            </div>
+        </div>
+
+        <div class="row justify-content-start flex-nowrap">
+            <div class="col-2 my-auto">
+                <input type="text" class="form-control bg-dark text-light my-auto" style="text-align:center" value="Reflex" readonly disabled>
+            </div>
+            <div class="col-1 my-auto">
+                <InputNumber @bind-Value="model.reflexTotal" readonly disabled class="form-control"></InputNumber>
+            </div>
+            <div class="col-1">
+                <InputNumber @bind-Value="model.reflexBase" @bind-Value:after=CalcSaves class="form-control"></InputNumber>
+            </div>
+            <div class="col-1">
+                <InputNumber @bind-Value="model.dexMod" @bind-Value:after=CalcSaves class="form-control"></InputNumber>
+            </div>
+            <div class="col-1">
+                <InputNumber @bind-Value="model.reflexMagicMod" @bind-Value:after=CalcSaves class="form-control"></InputNumber>
+            </div>
+            <div class="col-1">
+                <InputNumber @bind-Value="model.reflexMiscMod" @bind-Value:after=CalcSaves class="form-control"></InputNumber>
+            </div>
+            <div class="col-1">
+                <InputNumber @bind-Value="model.reflexTempMod" @bind-Value:after=CalcSaves class="form-control"></InputNumber>
+            </div>
+        </div>
+
+        <div class="row justify-content-start flex-nowrap">
+            <div class="col-2 my-auto">
+                <input type="text" class="form-control bg-dark text-light my-auto" style="text-align:center" value="will" readonly disabled>
+            </div>
+            <div class="col-1 my-auto">
+                <InputNumber @bind-Value="model.willTotal" readonly disabled class="form-control"></InputNumber>
+            </div>
+            <div class="col-1">
+                <InputNumber @bind-Value="model.willBase" @bind-Value:after=CalcSaves class="form-control"></InputNumber>
+            </div>
+            <div class="col-1">
+                <InputNumber @bind-Value="model.wisMod" @bind-Value:after=CalcSaves class="form-control"></InputNumber>
+            </div>
+            <div class="col-1">
+                <InputNumber @bind-Value="model.willMagicMod" @bind-Value:after=CalcSaves class="form-control"></InputNumber>
+            </div>
+            <div class="col-1">
+                <InputNumber @bind-Value="model.willMiscMod" @bind-Value:after=CalcSaves class="form-control"></InputNumber>
+            </div>
+            <div class="col-1">
+                <InputNumber @bind-Value="model.willTempMod" @bind-Value:after=CalcSaves class="form-control"></InputNumber>
+            </div>
+        </div>
+    }
+    @if (model.showInfo == "ALL" || model.showInfo == "Skills")
+    {
+        <br />
+            <!--
+                this is skills
+                TODO: get them to be bottom or center of box
+            -->
+
+        <div class="row justify-content-start  flex-nowrap">
+            <div class="col-4 border border-1">
+                <p class="text-center">SkillName</p>
+            </div>
+            <div class="col-1 border border-1">
+                <p class="text-center">Key Ability</p>
+            </div>
+            <div class="col-1 border border-1">
+                <p class="text-center">Skill Mod</p>
+            </div>
+            <div class="col-1 border border-1">
+                <p class="text-center">Ability Mod</p>
+            </div>
+            <div class="col-1 border border-1">
+                <p class="text-center">ranks</p>
+            </div>
+            <div class="col-1 border border-1">
+                <p class="text-center">Misc</p>
+            </div>
+        </div>
+        @foreach(var skill in model.skillList)
+        {
+            <div class="row justify-content-start  flex-nowrap">
+                <div class="col-4 border border-1">
+                    <p>
+                        <InputCheckbox @bind-Value="skill.classSkill"></InputCheckbox>&nbsp;@Regex.Replace(skill.name,@"[0-9]","")&nbsp;
+                        <span hidden="@(skill.useUntrained == false)">&#x25A0;</span>
+                        <span hidden="@(skill.showSubName == false)">(<InputText @bind-Value="skill.subName"></InputText>)</span>
+                    </p>
+                </div>
+                <div class="col-1 border border-1">
+                    <p class="text-center">@skill.keyAbility<span hidden="@(skill.armorCheck == false)">*</span></p>
+                </div>
+                <div class="col-1 border border-1">
+                    <InputNumber @bind-Value="skill.total" disabled readonly class="form-control"></InputNumber>
+                </div>
+                <div class="col-1 border border-1">
+                    @if (skill.keyAbility == "STR")
+                    {
+                        <InputNumber @bind-Value="model.strMod" readonly class="form-control"></InputNumber>
+                    }
+                    else if (skill.keyAbility == "DEX")
+                    {
+                        <InputNumber @bind-Value="model.dexMod" readonly class="form-control"></InputNumber>
+                    }
+                    else if (skill.keyAbility == "CON")
+                    {
+                        <InputNumber @bind-Value="model.conMod" readonly class="form-control"></InputNumber>
+                    }
+                    else if (skill.keyAbility == "WIS")
+                    {
+                        <InputNumber @bind-Value="model.wisMod" readonly class="form-control"></InputNumber>
+                    }
+                    else if (skill.keyAbility == "INT")
+                    {
+                        <InputNumber @bind-Value="model.intMod" readonly class="form-control"></InputNumber>
+                    }
+                    else if (skill.keyAbility == "CHA")
+                    {
+                        <InputNumber @bind-Value="model.chaMod" readonly class="form-control"></InputNumber>
+                    }
+                </div>
+                <div class="col-1 border border-1">
+                    <InputNumber @bind-Value="skill.ranks" @bind-Value:after=CalcSkills class="form-control"></InputNumber>
+                </div>
+                <div class="col-1 border border-1">
+                    <InputNumber @bind-Value="skill.misc" @bind-Value:after=CalcSkills class="form-control"></InputNumber>
+                </div>
+            </div>
+        }
+    }
+    @if (model.showInfo == "ALL" || model.showInfo == "Att")
+    {
+        <br />
+        <div class="row justify-content-start flex-nowrap">
+            <div class="col-4 my-auto">
+                <div class="form-floating">
+                    <InputText class="form-control" @bind-Value="model.bab" @bind-Value:after=CalculateAttackBonuses></InputText>
+                    <label>Base Attack Bonus</label>
+                </div>
+            </div>
+            <div class="col-4 my-auto">
+                <div class="form-floating">
+                    <InputNumber class="form-control" @bind-Value="model.SpellRes"></InputNumber>
+                    <label>Spell Resistance</label>
+                </div>
+            </div>
+        </div>
+        <input type="button" class="btn btn-outline-success" onclick="@AddAttack" value="+" />
+        @foreach(var att in model.attacks)
+        {
+            <br />
+            <br />
+            <button @onclick="() => RemoveAttack(att)" class="btn btn-outline-danger">-</button>
+
+            <div class="row justify-content-start flex-nowrap">
+                <div class="col-4 bg-dark text-light text-center px-0">Attack</div>
+                <div class="col-2 bg-dark text-light text-center px-0">Attack Bonus</div>
+                <div class="col-2 bg-dark text-light text-center px-0">Damage</div>
+                <div class="col-2 bg-dark text-light text-center px-0">Critial</div>
+            </div>
+            <div class="row justify-content-start flex-nowrap">
+                <div class="col-4 border border-2 px-0"><InputText @bind-Value="att.name" class="form-control"></InputText></div>
+                <div class="col-2 border border-2 px-0"><InputText @bind-Value="att.attackBonus" class="form-control"></InputText></div>
+                <div class="col-2 border border-2 px-0"><InputText @bind-Value="att.dmg" class="form-control"></InputText></div>
+                <div class="col-2 border border-2 px-0"><InputText @bind-Value="att.crit" class="form-control"></InputText></div>
+            </div>
+            <div class="row justify-content-start flex-nowrap">
+                <div class="col-2 bg-dark text-light text-center px-0">Range</div>
+                <div class="col-2 bg-dark text-light text-center px-0">Type</div>
+                <div class="col-6 bg-dark text-light text-center px-0">Notes</div>
+            </div>
+            <div class="row justify-content-start flex-nowrap">
+                <div class="col-2 border border-2 px-0"><InputNumber @bind-Value="att.range" class="form-control"></InputNumber></div>
+                <div class="col-2 border border-2 px-0">
+                    <InputSelect @bind-Value="att.type" class="form-select">
+                        <option value=""></option>
+                        <option value="B">Bludgeoning</option>
+                        <option value="P">Piercing</option>
+                        <option value="S">Slashing</option>
+                        <option value="SP">Slashing or piercing</option>
+                        <option value="BP">Bludgeoning and piercing</option>
+                    </InputSelect>
+                </div>
+                <div class="col-6 border border-2 px-0"><InputText @bind-Value="att.notes" class="form-control"></InputText></div>
+            </div>
+            <div class="row justify-content-start flex-nowrap">
+                <div class="col-10 px-0 mx-0">
+                    <div class="form-floating">
+                        <InputTextArea @bind-Value="att.ammo" class="form-control"></InputTextArea>
+                        <label>Ammunition</label>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+
+
+@code {
+    #region Constant Values
+    Dictionary<string, string> raceStatChanges = new Dictionary<string, string>
+    {
+        {"DWF","CON,2,CHA,-2" },
+        {"ELF","DEX,2,CON,-2"},
+        {"GNO","CON,2,STR,-2"},
+        {"HOR","STR,2,INT,-2,CHA,-2"},
+        {"HAF","DEX,2,STR,-2"},
+    };
+
+    #endregion
+    ThreeFiveSheet model = new ThreeFiveSheet();
+
+
+
+
+
+    private Task AlterStatsRace()
+    {
+        SubtractRaceStats(model.lastRace);
+        model.lastRace = model.race;
+        AddRaceStats(model.race);
+        return Task.CompletedTask;
+    }
+
+    private Task CalculateModifier()
+    {
+        //regular
+        model.strMod = Calculator.CalcModValue(model.str);
+        model.dexMod = Calculator.CalcModValue(model.dex);
+        model.conMod = Calculator.CalcModValue(model.con);
+        model.wisMod = Calculator.CalcModValue(model.wis);
+        model.intMod = Calculator.CalcModValue(model.intel);
+        model.chaMod = Calculator.CalcModValue(model.cha);
+        //temp
+        if (model.tempStr < model.str) model.tempStr = model.str;
+        if (model.tempDex < model.dex) model.tempDex = model.dex;
+        if (model.tempCon < model.con) model.tempCon = model.con;
+        if (model.tempWis < model.wis) model.tempWis = model.wis;
+        if (model.tempIntel < model.intel) model.tempIntel = model.intel;
+        if (model.tempCha < model.cha) model.tempCha = model.cha;
+
+        model.tempStrMod = Calculator.CalcModValue(model.tempStr);
+        model.tempDexMod = Calculator.CalcModValue(model.tempDex);
+        model.tempConMod = Calculator.CalcModValue(model.tempCon);
+        model.tempWisMod = Calculator.CalcModValue(model.tempWis);
+        model.tempIntMod = Calculator.CalcModValue(model.tempIntel);
+        model.tempChaMod = Calculator.CalcModValue(model.tempCha);
+
+        model.init = model.dexMod >= model.tempDexMod ? model.dexMod : model.tempDexMod;
+        Calculator.TotalAC(model);
+        Calculator.CalcSaves(model);
+        Calculator.TotalSkills(model);
+
+        return Task.CompletedTask;
+    }
+
+
+    private void AddRaceStats(string race)
+    {
+        if (raceStatChanges.TryGetValue(race, out var changesStr))
+        {
+            string[] parts = changesStr.Split(',');
+            for (int i = 0; i < parts.Length; i += 2)
+            {
+                if (int.TryParse(parts[i + 1], out int change))
+                {
+                    switch (parts[i])
+                    {
+                        case "STR":
+                            model.str += (change);
+                            model.strMod = Calculator.CalcModValue(model.str);
+                            break;
+                        case "DEX":
+                            model.dex += (change);
+                            model.dexMod = Calculator.CalcModValue(model.dex);
+                            break;
+                        case "CON":
+                            model.con += (change);
+                            model.conMod = Calculator.CalcModValue(model.con);
+                            break;
+                        case "WIS":
+                            model.wis += (change);
+                            model.wisMod = Calculator.CalcModValue(model.wis);
+                            break;
+                        case "INT":
+                            model.intel += (change);
+                            model.intMod = Calculator.CalcModValue(model.intel);
+                            break;
+                        case "CHA":
+                            model.cha += (change);
+                            model.chaMod = Calculator.CalcModValue(model.cha);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+    }
+
+    private void SubtractRaceStats(string race)
+    {
+        if(raceStatChanges.TryGetValue(race,out var changesStr))
+        {
+            string[] parts = changesStr.Split(',');
+            for(int i = 0; i < parts.Length; i+=2)
+            {
+                if (int.TryParse(parts[i + 1],out int change))
+                {
+                    switch (parts[i])
+                    {
+                        case "STR":
+                            model.str += (-1 * change);
+                            model.strMod = Calculator.CalcModValue(model.str);
+                            break;
+                        case "DEX":
+                            model.dex += (-1 * change);
+                            model.dexMod = Calculator.CalcModValue(model.dex);
+                            break;
+                        case "CON":
+                            model.con += (-1 * change);
+                            model.conMod = Calculator.CalcModValue(model.con);
+                            break;
+                        case "WIS":
+                            model.wis += (-1 * change);
+                            model.wisMod = Calculator.CalcModValue(model.wis);
+                            break;
+                        case "INT":
+                            model.intel += (-1 * change);
+                            model.intMod = Calculator.CalcModValue(model.intel);
+                            break;
+                        case "CHA":
+                            model.cha += (-1 * change);
+                            model.chaMod = Calculator.CalcModValue(model.cha);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+    }
+
+    private Task TotalAC()
+    {
+        Calculator.TotalAC(model);
+        return Task.CompletedTask;
+    }
+    private Task CalcSaves()
+    {
+        Calculator.CalcSaves(model);
+        return Task.CompletedTask;
+    }
+    private Task CalcSkills()
+    {
+        Calculator.TotalSkills(model);
+        return Task.CompletedTask;
+    }
+    private Task CalculateAttackBonuses()
+    {
+        return Task.CompletedTask;
+    }
+    private Task AddAttack()
+    {
+        model.attacks.Add(new AttackData());
+        return Task.CompletedTask;
+    }
+    private Task RemoveAttack(AttackData att)
+    {
+        model.attacks.Remove(att);
+        return Task.CompletedTask;
+    }
+    private Task RemoveAttack(string name)
+    {
+        var attackToRemove = model.attacks.FirstOrDefault(x => x.name == name);
+        if(attackToRemove != null)
+        {
+            model.attacks.Remove(attackToRemove);
+        }
+        return Task.CompletedTask;
+    }
+    private Task RemoveAttack()
+    {
+        return Task.CompletedTask;
+    }
+    private Task logging()
+    {
+        //Console.WriteLine(model.showInfo);
+        return Task.CompletedTask;
+    }
+}

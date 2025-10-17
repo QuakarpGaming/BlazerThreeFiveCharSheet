@@ -1,0 +1,12 @@
+﻿-find a better spot for the remove attack button
+-write the parser for BAB
+--add a base stat for the attack,(should only need str,dex,wis,int,cha)
+-add what type of abilty mod is added to attack bonus
+-save text and skill text needs to be vertically centered or at the botton of the boX
+-max dex mod for ac
+
+
+
+
+Extra Goals, 
+-make 5e too

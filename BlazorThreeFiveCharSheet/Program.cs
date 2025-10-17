@@ -1,5 +1,5 @@
-using BlazerThreeFiveCharSheet.Client.Pages;
-using BlazerThreeFiveCharSheet.Components;
+using BlazorThreeFiveCharSheet.Client.Pages;
+using BlazorThreeFiveCharSheet.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +29,6 @@ app.UseAntiforgery();
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(BlazerThreeFiveCharSheet.Client._Imports).Assembly);
+    .AddAdditionalAssemblies(typeof(BlazorThreeFiveCharSheet.Client._Imports).Assembly);
 
 app.Run();
