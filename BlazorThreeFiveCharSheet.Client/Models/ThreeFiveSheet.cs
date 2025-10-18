@@ -137,19 +137,43 @@ namespace BlazorThreeFiveCharSheet.Client.Models
             showInfoValues = new Dictionary<string, string>()
             {
                 {"ALL","All" },
-                {"CharData","CharacterData" },
+                {"CharData","Top Info" },
                 {"Stats","Stats" },
                 {"HPAC","HP/AC" },
                 {"Saves","Saves" },
                 {"Skills","Skills" },
-                {"Att","Attack Data" }
+                {"Att","Attacks" },
+                {"Gear","Gear" },
+                {"FSAL","Feats/Abilities/Langauge" },
+                {"Spells","Spells" }
             };
             bab = string.Empty;
             SpellRes = 0;
             attacks = new List<AttackData>();
+            campaign = string.Empty;
+            exp = 0;
+            characterLvl = 1;
+
+            armor = new Gear();
+            armor.acType = ACType.Armor;
+            shield = new Gear();
+            shield.acType = ACType.Shield;
+            protectionItems = [];
+            otherPosessions = [];
+            feats = [];
+            specialAbilities = [];
+            languages = [];
+            casterLvl = 0;
+            baseSpellSave = 0;
+            spellcastingStat = string.Empty;
+            spellsKnown = new Dictionary<int, int>() { { 0, 0 }, { 1, 0 }, { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, {7, 0 }, { 8, 0 },{ 9,0},};
+            spellSaveDcs = new Dictionary<int, int>() { { 0, 0 }, { 1, 0 }, { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 }, { 8, 0 }, { 9, 0 }, };
+            spellsPerDay = new Dictionary<int, int>() { { 0, 0 }, { 1, 0 }, { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 }, { 8, 0 }, { 9, 0 }, };
+            bonusSpells = new Dictionary<int, int>() { { 0, 0 }, { 1, 0 }, { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 }, { 8, 0 }, { 9, 0 }, };
+            spells = new Dictionary<int, List<string>>() { { 0, [] }, { 1, [] }, { 2, [] }, { 3, [] }, { 4, [] }, { 5, [] }, { 6, [] }, { 7, [] }, { 8, [] }, { 9, [] }, };
         }
         
-        
+       
         public string showInfo { get; set; }
         public string characterName { get; set; }
         public string player { get; set; }
@@ -200,6 +224,7 @@ namespace BlazorThreeFiveCharSheet.Client.Models
         public int acSizeMod { get; set; }
         public int acNat { get; set; }
         public int acDeflection { get; set; }
+        public int acDex => CalcArmorDexMod();
         public int init { get; set; }
         public string speed { get; set; }
         public string dmgRedutions { get; set; }
@@ -229,5 +254,38 @@ namespace BlazorThreeFiveCharSheet.Client.Models
         public string bab { get; set; }
         public int SpellRes {  get; set; }
         public List<AttackData> attacks { get; set; }
+        public string campaign { get; set; }
+        public int exp { get; set; }
+        public int characterLvl { get; set; }  
+        public Gear armor { get; set; }
+        public Gear shield { get; set; }
+        public List<Gear> protectionItems { get; set; }
+        public int spellFailure => armor.spellFailure + shield.spellFailure;
+        public int armorCheckPent => armor.checkPen + shield.checkPen;
+        public List<OtherPosession> otherPosessions { get; set; }
+        public decimal totalWeightCarried => otherPosessions.Sum(x => x.amount * x.weight);
+        public List<string> feats { get; set; }
+        public List<string> specialAbilities { get; set; }
+        public List<string> languages { get; set; }
+
+        public int casterLvl { get;set; }
+        public int baseSpellSave {  get; set; }
+        public string spellcastingStat { get; set; }
+        public Dictionary<int,int> spellsKnown { get; set; }
+        public Dictionary<int,int> spellSaveDcs { get; set; }
+        public Dictionary<int,int> spellsPerDay { get; set; }
+        public Dictionary<int,int> bonusSpells { get; set; }
+        public Dictionary<int,List<string>> spells {  get; set; }
+        private int CalcArmorDexMod()
+        {
+            var returnValue = dexMod;
+            if(armor.maxDexMod.HasValue)
+            {
+                if (dexMod > armor.maxDexMod.Value)
+                    returnValue = armor.maxDexMod.Value;
+            }
+
+            return returnValue;
+        }
     }
 }

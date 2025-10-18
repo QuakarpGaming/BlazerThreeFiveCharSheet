@@ -3,16 +3,13 @@
 <PageTitle>Character Sheet</PageTitle>
 <div style="width: 100%" class=" container border border-2">
     <InputRadioGroup Name="Info"  @bind-Value="model.showInfo" @bind-Value:after=logging>
-        <div class="row">
         @foreach(var opt in model.showInfoValues.Keys)
         {
-            <div class="col boader board-1">
-                <label>@model.showInfoValues[opt]</label>
-                <InputRadio TValue="string" Value="@opt" Name="Info"></InputRadio>
-                
-            </div>
+            @* <div class="form-check form-check-inline"> *@
+                <InputRadio TValue="string" Value="@opt" Name="Info" class="btn-check" id="@opt"></InputRadio>
+            <label for="@opt" class="btn btn-outline-primary">@model.showInfoValues[opt]</label>
+            @* </div> *@
         }
-        </div>
     </InputRadioGroup>
 </div>
 <div style="width: 100%" class=" container border border-2">
@@ -142,6 +139,20 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-floating">
+                        <InputText @bind-Value="model.campaign" class="form-control"></InputText>
+                        <label>Campaign</label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating">
+                        <InputNumber @bind-Value="model.exp" @bind-Value:after=CalculateCharLvl class="form-control"></InputNumber>
+                        <label>Experience Points(character Level @model.characterLvl)</label>
+                    </div>
+                </div>
+            </div>
         </div>
         <br /><br />
     }
@@ -178,6 +189,7 @@
                 </div>
             </div>
         }
+ 
         @if (model.showInfo == "ALL" || model.showInfo == "HPAC")
         {
                 <div class="col-6">
@@ -239,7 +251,7 @@
                     </div>
                     <div class="col-2 px-1">
                         <div class="form-floating">
-                            <InputNumber class="form-control " readonly @bind-Value="model.dexMod" @bind-Value:after=TotalAC></InputNumber>
+                            <InputNumber class="form-control " readonly Value="model.acDex" ValueExpression="() => model.acDex"></InputNumber>
                             <label>Dex</label>
                         </div>
                     </div>
@@ -300,7 +312,8 @@
             </div>
         </div>
         }
-                @if (model.showInfo == "ALL" || model.showInfo == "HPAC")
+ 
+        @if (model.showInfo == "ALL" || model.showInfo == "HPAC")
         {
             <div class="col-2">
                 <div class="form-floating">
@@ -318,8 +331,9 @@
         </div>
         }
     </div>
-            @if (model.showInfo == "ALL" || model.showInfo == "Saves")
-    {
+        @if (model.showInfo == "ALL" || model.showInfo == "Saves")
+
+        {
             <br />
             <div class="row justify-content-start flex-nowrap">
                 <div class="col-2 my-auto">
@@ -357,7 +371,7 @@
                 <InputNumber @bind-Value="model.fortBase" @bind-Value:after=CalcSaves class="form-control"></InputNumber>
             </div>
             <div class="col-1">
-                <InputNumber @bind-Value="model.conMod" @bind-Value:after=CalcSaves class="form-control"></InputNumber>
+                <InputNumber @bind-Value="model.conMod" readonly @bind-Value:after=CalcSaves class="form-control"></InputNumber>
             </div>
             <div class="col-1">
                 <InputNumber @bind-Value="model.fortMagicMod" @bind-Value:after=CalcSaves class="form-control"></InputNumber>
@@ -381,7 +395,7 @@
                 <InputNumber @bind-Value="model.reflexBase" @bind-Value:after=CalcSaves class="form-control"></InputNumber>
             </div>
             <div class="col-1">
-                <InputNumber @bind-Value="model.dexMod" @bind-Value:after=CalcSaves class="form-control"></InputNumber>
+                <InputNumber TValue="int" readonly Value="model.acDex" ValueExpression="() => model.acDex" class="form-control"></InputNumber>
             </div>
             <div class="col-1">
                 <InputNumber @bind-Value="model.reflexMagicMod" @bind-Value:after=CalcSaves class="form-control"></InputNumber>
@@ -405,7 +419,7 @@
                 <InputNumber @bind-Value="model.willBase" @bind-Value:after=CalcSaves class="form-control"></InputNumber>
             </div>
             <div class="col-1">
-                <InputNumber @bind-Value="model.wisMod" @bind-Value:after=CalcSaves class="form-control"></InputNumber>
+                <InputNumber @bind-Value="model.wisMod" readonly  @bind-Value:after=CalcSaves class="form-control"></InputNumber>
             </div>
             <div class="col-1">
                 <InputNumber @bind-Value="model.willMagicMod" @bind-Value:after=CalcSaves class="form-control"></InputNumber>
@@ -497,6 +511,7 @@
             </div>
         }
     }
+ 
     @if (model.showInfo == "ALL" || model.showInfo == "Att")
     {
         <br />
@@ -514,33 +529,33 @@
                 </div>
             </div>
         </div>
-        <input type="button" class="btn btn-outline-success" onclick="@AddAttack" value="+" />
+        <input type="button" class="btn btn-outline-success" onclick="@AddAttack" value="Add Attack" />
         @foreach(var att in model.attacks)
         {
             <br />
             <br />
-            <button @onclick="() => RemoveAttack(att)" class="btn btn-outline-danger">-</button>
+            
 
             <div class="row justify-content-start flex-nowrap">
-                <div class="col-4 bg-dark text-light text-center px-0">Attack</div>
-                <div class="col-2 bg-dark text-light text-center px-0">Attack Bonus</div>
-                <div class="col-2 bg-dark text-light text-center px-0">Damage</div>
-                <div class="col-2 bg-dark text-light text-center px-0">Critial</div>
+                <div class="col-4 bg-dark text-light text-center px-2">Attack<button @onclick="() => RemoveAttack(att)" class="btn btn-danger btn-sm mx-2 py-0">X</button></div>
+                <div class="col-2 bg-dark text-light text-center px-2">Attack Bonus</div>
+                <div class="col-2 bg-dark text-light text-center px-2">Damage</div>
+                <div class="col-2 bg-dark text-light text-center px-2">Critical</div>
             </div>
             <div class="row justify-content-start flex-nowrap">
-                <div class="col-4 border border-2 px-0"><InputText @bind-Value="att.name" class="form-control"></InputText></div>
-                <div class="col-2 border border-2 px-0"><InputText @bind-Value="att.attackBonus" class="form-control"></InputText></div>
-                <div class="col-2 border border-2 px-0"><InputText @bind-Value="att.dmg" class="form-control"></InputText></div>
-                <div class="col-2 border border-2 px-0"><InputText @bind-Value="att.crit" class="form-control"></InputText></div>
+                <div class="col-4 border border-2 px-2"><InputText @bind-Value="att.name" class="form-control"></InputText></div>
+                <div class="col-2 border border-2 px-2"><InputText @bind-Value="att.attackBonus" class="form-control"></InputText></div>
+                <div class="col-2 border border-2 px-2"><InputText @bind-Value="att.dmg" class="form-control"></InputText></div>
+                <div class="col-2 border border-2 px-2"><InputText @bind-Value="att.crit" class="form-control"></InputText></div>
             </div>
             <div class="row justify-content-start flex-nowrap">
-                <div class="col-2 bg-dark text-light text-center px-0">Range</div>
-                <div class="col-2 bg-dark text-light text-center px-0">Type</div>
-                <div class="col-6 bg-dark text-light text-center px-0">Notes</div>
+                <div class="col-2 bg-dark text-light text-center px-2">Range</div>
+                <div class="col-2 bg-dark text-light text-center px-2">Type</div>
+                <div class="col-6 bg-dark text-light text-center px-2">Notes</div>
             </div>
             <div class="row justify-content-start flex-nowrap">
-                <div class="col-2 border border-2 px-0"><InputNumber @bind-Value="att.range" class="form-control"></InputNumber></div>
-                <div class="col-2 border border-2 px-0">
+                <div class="col-2 border border-2 px-2"><InputNumber @bind-Value="att.range" class="form-control"></InputNumber></div>
+                <div class="col-2 border border-2 px-2">
                     <InputSelect @bind-Value="att.type" class="form-select">
                         <option value=""></option>
                         <option value="B">Bludgeoning</option>
@@ -562,6 +577,282 @@
             </div>
         }
     }
+    
+    @if (model.showInfo == "ALL" || model.showInfo == "Gear")
+    {
+        <div class="row">
+            <div class="col  bg-dark text-light text-center">GEAR</div>
+        </div>
+        <br />
+        <div class="row justify-content-start flex-nowrap">
+            <div class="col-3 bg-dark text-light text-center px-2">Armor</div>
+            <div class="col-2 bg-dark text-light text-center px-2">Type</div>
+            <div class="col-2 bg-dark text-light text-center px-2">AC Bonus</div>
+            <div class="col-2 bg-dark text-light text-center px-2">Max Dex</div>
+        </div>
+        <div class="row justify-content-start flex-nowrap">
+            <div class="col-3  border border-2 text-center px-2"><InputText @bind-Value="model.armor.name" class="form-control"></InputText></div>
+            <div class="col-2  border border-2 text-center px-2">
+                <InputSelect @bind-Value="model.armor.type" class="form-select">
+                    @foreach (GearType type in Enum.GetValues(typeof(GearType)))
+                    {
+                     <option value="@type">@type</option>   
+                    }
+                </InputSelect>
+            </div>
+            <div class="col-2 border border-2 text-center px-2"><InputNumber @bind-Value="model.armor.bonus" @bind-Value:after=UpdateAcValues class="form-control"></InputNumber></div>
+            <div class="col-2 border border-2 text-center px-2"><InputNumber @bind-Value="model.armor.maxDexMod" @bind-Value:after=UpdateAcValues class="form-control"></InputNumber></div>
+        </div>
+        <div class="row justify-content-start flex-nowrap">
+            <div class="row justify-content-start flex-nowrap">
+                <div class="col-2 bg-dark text-light text-center px-2">Check Penalty</div>
+                <div class="col-2 bg-dark text-light text-center px-2">Spell Failure</div>
+                <div class="col-2 bg-dark text-light text-center px-2">Speed</div>
+                <div class="col-2 bg-dark text-light text-center px-2">Weight</div>
+                <div class="col-2 bg-dark text-light text-center px-2">Special Props</div>
+            </div>
+        </div>
+        <div class="row justify-content-start flex-nowrap">
+            <div class="row justify-content-start flex-nowrap">
+                <div class="col-2 border border-2 text-center px-2"><InputNumber @bind-Value="model.armor.checkPen" class="form-control"></InputNumber></div>
+                <div class="col-2 border border-2 text-center px-2"><InputNumber @bind-Value="model.armor.spellFailure" class="form-control"></InputNumber></div>
+                <div class="col-2 border border-2 text-center px-2"><InputNumber @bind-Value="model.armor.speed" class="form-control"></InputNumber></div>
+                <div class="col-2 border border-2 text-center px-2"><InputNumber @bind-Value="model.armor.weight"  class="form-control"></InputNumber></div>
+                <div class="col-2 border border-2 text-center px-2"><InputTextArea @bind-Value="model.armor.specialProps" class="form-control"></InputTextArea></div>
+            </div>
+        </div>
+        <br /><br />
+        <div class="row justify-content-start flex-nowrap">
+            <div class="col-3 bg-dark text-light text-center px-2">shield</div>
+            <div class="col-2 bg-dark text-light text-center px-2">AC Bonus</div> 
+            <div class="col-2 bg-dark text-light text-center px-2">Weight</div>
+            <div class="col-2 bg-dark text-light text-center px-2">Check Penalty</div>
+        </div>
+        <div class="row justify-content-start flex-nowrap">
+            <div class="col-3  border border-2 text-center px-2"><InputText @bind-Value="model.shield.name" class="form-control"></InputText></div>
+            <div class="col-2 border border-2 text-center px-2"><InputNumber @bind-Value="model.shield.bonus" @bind-Value:after=UpdateAcValues class="form-control"></InputNumber></div>                
+            <div class="col-2 border border-2 text-center px-2"><InputNumber @bind-Value="model.shield.weight" class="form-control"></InputNumber></div>
+            <div class="col-2 border border-2 text-center px-2"><InputNumber @bind-Value="model.shield.checkPen" class="form-control"></InputNumber></div>
+        </div>
+        <div class="row justify-content-start flex-nowrap">
+            <div class="row justify-content-start flex-nowrap">
+                <div class="col-2 bg-dark text-light text-center px-2">Spell Failure</div>
+                <div class="col-8 bg-dark text-light text-center px-2">Special Props</div>
+            </div>
+        </div>
+        <div class="row justify-content-start flex-nowrap">
+            <div class="row justify-content-start flex-nowrap">
+                <div class="col-2 border border-2 text-center px-2"><InputNumber @bind-Value="model.shield.spellFailure" class="form-control"></InputNumber></div>
+                <div class="col-8 border border-2 text-center px-2"><InputTextArea @bind-Value="model.shield.specialProps" class="form-control"></InputTextArea></div>
+            </div>
+        </div>
+        <br />
+        <input type="button" class="btn btn-outline-success" onclick="@AddProtectiveItem" value="Add Protection Item" />
+        @foreach(var item  in model.protectionItems)
+        {
+            <br />
+            <div class="row justify-content-start flex-nowrap">
+                <div class="col-4 bg-dark text-light text-center px-2">Protective Item</div>
+                <div class="col-2 bg-dark text-light text-center px-2">AC Bonus</div>
+                <div class="col-2 bg-dark text-light text-center px-2">Slot</div>
+                <div class="col-2 bg-dark text-light text-center px-2">AC Type</div>
+            </div>
+            <div class="row justify-content-start flex-nowrap">
+                <div class="col-4  border border-2 text-center px-2"><InputText @bind-Value="item.name" class="form-control"></InputText></div>
+                <div class="col-2 border border-2 text-center px-2"><InputNumber @bind-Value="item.bonus" @bind-Value:after=UpdateAcValues class="form-control"></InputNumber></div>
+                <div class="col-2  border border-2 text-center px-2">
+                    <InputSelect @bind-Value="item.type" class="form-select">
+                        @foreach (GearType type in Enum.GetValues(typeof(GearType)))
+                        {
+                            <option value="@type">@type</option>
+                        }
+                    </InputSelect>
+                </div>
+                <div class="col-2  border border-2 text-center px-2">
+                    <InputSelect @bind-Value="item.acType" @bind-Value:after=UpdateAcValues class="form-select">
+                        @foreach (ACType type in Enum.GetValues(typeof(ACType)))
+                        {
+                            <option value="@type">@type</option>
+                        }
+                    </InputSelect>
+                </div>
+            </div>
+            <div class="row justify-content-start flex-nowrap">
+                <div class="col-2 bg-dark text-light text-center px-2">Weight</div>
+                <div class="col-6 bg-dark text-light text-center px-2">Special Props</div>
+                <div class="col-2 bg-dark text-light text-center px-2"></div>
+            </div>
+            <div class="row justify-content-start flex-nowrap">
+                <div class="col-2 border border-2 text-center px-2"><InputNumber @bind-Value="item.weight" class="form-control"></InputNumber></div>
+                <div class="col-6 border border-2 text-center px-2"><InputTextArea @bind-Value="item.specialProps" class="form-control"></InputTextArea></div>
+                <div class="col-2 border border-2 text-center px-2"><button @onclick="() => RemoveProtectionItem(item)" class="btn btn-outline-danger">X</button></div>
+            </div>
+
+        }
+
+        <br />
+        <div class="row justify-content-start flex-nowrap">
+
+            <div class="col-10 bg-dark text-light text-center px-2">Other Possesssion <input type="button" class="btn btn-success btn-sm" onclick="@AddItem" value="+" /></div>
+        </div>
+        <div class="row justify-content-start flex-nowrap">
+            <div class="col-2  border border-2 text-center px-2">Item</div>
+            <div class="col-1  border border-2 text-center px-2">PG</div>
+            <div class="col-1  border border-2 text-center px-2">WT</div>
+            <div class="col-1  border border-2 text-center px-2"></div>
+            <div class="col-2  border border-2 text-center px-2">Item</div>
+            <div class="col-1  border border-2 text-center px-2">PG</div>
+            <div class="col-1  border border-2 text-center px-2">WT</div>
+            <div class="col-1  border border-2 text-center px-2"></div>
+
+        </div>
+        @for (int i = 0; i < model.otherPosessions.Count; i+=2)
+        {
+            var local = i;
+            <div class="row justify-content-start flex-nowrap">
+                <div class="col-2  border border-2 text-center px-2"><InputText @bind-Value="model.otherPosessions[local].name" class="form-control"></InputText></div>
+                <div class="col-1  border border-2 text-center px-2"><InputNumber @bind-Value="model.otherPosessions[local].amount" class="form-control"></InputNumber></div>
+                <div class="col-1  border border-2 text-center px-2"><InputNumber @bind-Value="model.otherPosessions[local].weight" class="form-control"></InputNumber></div>
+                <div class="col-1  border border-2 text-center px-2"><button @onclick="() => RemoveOtherPossesion(model.otherPosessions[local])" class="btn btn-outline-danger">X</button></div>
+            @if ((local + 1) < model.otherPosessions.Count)
+            {
+                    <div class="col-2  border border-2 text-center px-2"><InputText @bind-Value="model.otherPosessions[local + 1].name" class="form-control"></InputText></div>
+                    <div class="col-1  border border-2 text-center px-2"><InputNumber @bind-Value="model.otherPosessions[local + 1].amount" class="form-control"></InputNumber></div>
+                    <div class="col-1  border border-2 text-center px-2"><InputNumber @bind-Value="model.otherPosessions[local + 1].weight" class="form-control"></InputNumber></div>
+                    <div class="col-1  border border-2 text-center px-2"><button @onclick="() => RemoveOtherPossesion(model.otherPosessions[local + 1])" class="btn btn-outline-danger">X</button></div>
+            }
+            else
+            {
+                <div class="col-5  border border-2 text-center px-2">
+                    <input type="button" class="btn btn-outline-success" onclick="@AddItem" value="Add Item" />
+                </div>
+
+                }
+            </div>
+        }
+        if((model.otherPosessions.Count & 1) == 0)
+        {
+            <div class="col-5  border border-2 text-center px-2">
+                <input type="button" class="btn btn-outline-success" onclick="@AddItem" value="Add Item" />
+            </div>
+        }
+        <div class="row">
+            <div class="col-3">
+                <div class="form-floating">
+                    <InputNumber Value="model.totalWeightCarried" readonly ValueExpression="() => model.totalWeightCarried" class="form-control"></InputNumber>
+                    <label>Total Weight Carried</label>
+                </div>
+            </div>
+        </div>
+
+    }
+    
+    @if (model.showInfo == "ALL" || model.showInfo == "FSAL")
+    {
+        <div class="row justify-content-center flex-nowrap">
+            <div class="col-3 bg-dark text-light text-center mx-4">Feats<button @onclick="() => AddFeat()" class="btn btn-success btn-sm mx-4 py-0">+</button></div>
+            <div class="col-3 bg-dark text-light text-center mx-4">Special Abilities<button @onclick="() => AddSA()" class="btn btn-success btn-sm mx-4 py-0">+</button></div>
+            <div class="col-3 bg-dark text-light text-center mx-4">Languages<button @onclick="() => AddLanguage()" class="btn btn-success btn-sm mx-4 py-0">+</button></div>
+        </div>
+        <div class="row justify-content-center flex-nowrap">
+            <div class="col-3  text-center mx-4">
+                @for(int i = 0; i < model.feats.Count;i++)
+                {
+                    var counter = i;
+                    <div class="row my-2 ">
+                        <div class="col-10"><InputText @bind-Value="model.feats[counter]" class="form-control"></InputText></div>
+                        <div class="col-1"><button @onclick="() => RemoveFeat(model.feats[counter])" class="btn btn-danger">-</button></div>
+                    </div>
+                }
+            </div>
+            <div class="col-3 text-center mx-4">
+                @for (int i = 0; i < model.specialAbilities.Count; i++)
+                {
+                    var counter = i;
+                    <div class="row my-2 ">
+                        <div class="col-10"><InputText @bind-Value="model.specialAbilities[counter]" class="form-control"></InputText></div>
+                        <div class="col-1"><button @onclick="() => RemoveSA(model.specialAbilities[counter])" class="btn btn-danger">-</button></div>
+                    </div>
+                }
+            </div>
+            <div class="col-3  text-center mx-4">
+                @for (int i = 0; i < model.languages.Count; i++)
+                {
+                    var counter = i;
+                    <div class="row my-2 ">
+                        <div class="col-10"><InputText @bind-Value="model.languages[counter]" class="form-control"></InputText></div>
+                        <div class="col-1"><button @onclick="() => RemoveLanguage(model.languages[counter])" class="btn btn-danger">-</button></div>
+                    </div>
+                }
+            </div>
+        </div>
+
+
+    }
+
+    @if (model.showInfo == "ALL" || model.showInfo == "Spells")
+    {
+        <br />
+        <div class="row justify-content-center flex-nowrap">
+            <div class="row bg-dark text-light text-center">
+                <div class="col-12">Spells</div>
+            </div>
+        </div>
+        <br />
+        <div class="row justify-content-center">
+            <div class="col-4">
+                <div class="form-floating">
+                    <InputNumber class="form-control" TValue="int" readonly @bind-Value="model.baseSpellSave" @bind-Value:after=UpdateSpellDC></InputNumber>
+                    <label >Spell Save</label>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="form-floating">
+                    <InputSelect class="form-select" readonly @bind-Value="model.spellcastingStat" @bind-Value:after=UpdateSpellDC>
+                        <option value=""></option>
+                        <option value="INT">Intelligence</option>
+                        <option value="WIS">Wisdom</option>
+                        <option value="CHA">Charisma</option>
+                    </InputSelect>
+                    <label >Spell Casting Stat</label>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="form-floating">
+                    <InputNumber class="form-control" readonly Value="model.spellFailure" ValueExpression="() => model.spellFailure"></InputNumber>
+                    <label >Spell Failure %</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row justify-content-center">
+            @foreach(var lvl in model.spellSaveDcs.Keys) //the spell dictionaries have the same keys of 0-9
+            {
+              <div class="col-6 py-2">
+                    <div class="row  border border-bottom-1 justify-content-center">
+                        <div class="col-3 py-2">Spell Level: @lvl  Spell DC: @model.spellSaveDcs[lvl]</div>
+                        <div class="col-3 py-2">
+                            <div class="form-floating">
+                                <InputNumber class="form-control"  @bind-Value="model.spellsPerDay[lvl]"></InputNumber>
+                                <label>Per Day</label>
+                            </div>
+                        </div>
+
+                    </div>
+                  @for(int i = 0; i < model.spells[lvl].Count; i++)
+                    {
+                        var li = i;
+                        <div class="row justify-content-center">
+                            <div class="col-6 py-2"><InputText @bind-Value="model.spells[lvl][li]" class="form-control"></InputText></div>
+                        </div>
+                    }
+                    <div class="row justify-content-center">
+                        <div class="col-6  py-2"><button @onclick="() => AddSpell(lvl)" class="btn btn-success mx-auto">+</button></div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
 </div>
 
 
@@ -580,10 +871,6 @@
     #endregion
     ThreeFiveSheet model = new ThreeFiveSheet();
 
-
-
-
-
     private Task AlterStatsRace()
     {
         SubtractRaceStats(model.lastRace);
@@ -591,7 +878,12 @@
         AddRaceStats(model.race);
         return Task.CompletedTask;
     }
-
+    private Task AddSpell(int lvl)
+    {
+        model.spells[lvl].Add(string.Empty);
+        Console.WriteLine(model.spells[lvl]);
+        return Task.CompletedTask;
+    }
     private Task CalculateModifier()
     {
         //regular
@@ -620,7 +912,7 @@
         Calculator.TotalAC(model);
         Calculator.CalcSaves(model);
         Calculator.TotalSkills(model);
-
+        UpdateSpellDC();
         return Task.CompletedTask;
     }
 
@@ -710,6 +1002,42 @@
             }
         }
     }
+    private Task UpdateAcValues()
+    {
+        var armor = model.armor.bonus;
+        var shield = model.shield.bonus;
+        var natural = 0;
+        var deflection = 0;
+
+        foreach(var item in model.protectionItems)
+        {
+            switch(item.acType)
+            {
+                case ACType.Armor:
+                    armor += item.bonus;
+                    break;
+                case ACType.Shield:
+                    shield += item.bonus;
+                    break;
+                case ACType.Natural:
+                    natural += item.bonus;
+                    break;
+                case ACType.Deflection:
+                    deflection += item.bonus;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        model.acArmor = armor;
+        model.acShield = shield;
+        model.acNat = natural;
+        model.acDeflection = deflection;
+        Calculator.TotalAC(model);
+        Calculator.CalcSaves(model);
+        return Task.CompletedTask;
+    }
 
     private Task TotalAC()
     {
@@ -740,19 +1068,81 @@
         model.attacks.Remove(att);
         return Task.CompletedTask;
     }
-    private Task RemoveAttack(string name)
+    private Task CalculateCharLvl()
     {
-        var attackToRemove = model.attacks.FirstOrDefault(x => x.name == name);
-        if(attackToRemove != null)
+        model.characterLvl = Calculator.CharacterLvl(model.exp);
+        return Task.CompletedTask;
+    }
+    private Task AddItem()
+    {
+        model.otherPosessions.Add(new OtherPosession());
+        return Task.CompletedTask;
+    }
+    private Task RemoveOtherPossesion(OtherPosession item)
+    {
+        model.otherPosessions.Remove(item);
+        return Task.CompletedTask;
+    }
+    private Task AddProtectiveItem()
+    {
+        model.protectionItems.Add(new Gear());
+        return Task.CompletedTask;
+    }
+    private Task RemoveProtectionItem(Gear item)
+    {
+        model.protectionItems.Remove(item);
+        UpdateAcValues();
+        return Task.CompletedTask;
+    }
+
+    private Task AddFeat()
+    {
+        model.feats.Add(string.Empty);
+        return Task.CompletedTask;
+    }
+    private Task AddSA()
+    {
+        model.specialAbilities.Add(string.Empty);
+        return Task.CompletedTask;
+    }
+    private Task AddLanguage()
+    {
+        model.languages.Add(string.Empty);
+        return Task.CompletedTask;
+    }
+
+    private Task RemoveFeat(string feat)
+    {
+        model.feats.Remove(feat);
+        return Task.CompletedTask;
+    }
+    private Task RemoveSA(string sa)
+    {
+        model.specialAbilities.Remove(sa);
+        return Task.CompletedTask;
+    }
+    private Task RemoveLanguage(string lang)
+    {
+        model.languages.Remove(lang);
+        return Task.CompletedTask;
+    }
+    private Task UpdateSpellDC()
+    {
+        if(!string.IsNullOrWhiteSpace(model.spellcastingStat))
         {
-            model.attacks.Remove(attackToRemove);
+            foreach(var lvl in model.spellSaveDcs.Keys)
+            {
+                model.spellSaveDcs[lvl] = Calculator.CalcSpellDcs(model, lvl);
+
+                if (lvl == 0)
+                {
+                    model.baseSpellSave = Calculator.CalcSpellDcs(model, lvl);
+                }
+            }
         }
         return Task.CompletedTask;
     }
-    private Task RemoveAttack()
-    {
-        return Task.CompletedTask;
-    }
+
     private Task logging()
     {
         //Console.WriteLine(model.showInfo);
