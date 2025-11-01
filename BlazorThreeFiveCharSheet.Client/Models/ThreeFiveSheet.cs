@@ -1,11 +1,12 @@
-﻿using System.Threading.Tasks.Dataflow;
+﻿using BlazorThreeFiveCharSheet.Client.Shared;
+using System.Threading.Tasks.Dataflow;
 
 namespace BlazorThreeFiveCharSheet.Client.Models
 {
     public class ThreeFiveSheet
     {
-        public ThreeFiveSheet() {
-            showInfo = "ALL";
+        public ThreeFiveSheet()
+        {
             characterName = string.Empty;
             player = string.Empty;
 
@@ -89,75 +90,80 @@ namespace BlazorThreeFiveCharSheet.Client.Models
 
             skillList = new List<Skill>()
             {
-                new Skill(name:"Appraise",keyAbility:"INT"),
-                new Skill(name:"Balance",keyAbility:"DEX",armorCheck:true),
-                new Skill(name:"Bluff",keyAbility:"CHA"),
-                new Skill(name:"Climb",keyAbility:"STR",armorCheck:true),
-                new Skill(name:"Concentration",keyAbility:"CON"),
-                new Skill(name:"Craft1",keyAbility:"INT",showSubName:true),
-                new Skill(name:"Craft2",keyAbility:"INT",showSubName:true),
-                new Skill(name:"Craft3",keyAbility:"INT",showSubName:true),
-                new Skill(name:"Decipher Script",keyAbility:"INT",useUntrained:false),
-                new Skill(name:"Diplomacy",keyAbility:"CHA"),
-                new Skill(name:"Disable Device",keyAbility:"INT",useUntrained:false),
-                new Skill(name:"Disguise",keyAbility:"CHA"),
-                new Skill(name:"Escape Artist",keyAbility:"DEX",armorCheck:true),
-                new Skill(name:"Forgery",keyAbility:"INT"),
-                new Skill(name:"Gather Info",keyAbility:"CHA"),
-                new Skill(name:"Handle Animal",keyAbility:"CHA"),
-                new Skill(name:"Heal",keyAbility:"WIS"),
-                new Skill(name:"Hide",keyAbility:"DEX",armorCheck:true),
-                new Skill(name:"Intimidate",keyAbility:"CHA"),
-                new Skill(name:"Jump",keyAbility:"STR",armorCheck:true),
-                new Skill(name:"Knowledge1",keyAbility:"INT",showSubName:true),
-                new Skill(name:"Knowledge2",keyAbility:"INT",showSubName:true),
-                new Skill(name:"Knowledge3",keyAbility:"INT",showSubName:true),
-                new Skill(name:"Knowledge4",keyAbility:"INT",showSubName:true),
-                new Skill(name:"Knowledge5",keyAbility:"INT",showSubName:true),
-                new Skill(name:"Listen",keyAbility:"WIS"),
-                new Skill(name:"Move Silently",keyAbility:"CHA",armorCheck:true),
-                new Skill(name:"Open Lock",keyAbility:"DEX",useUntrained:false),
-                new Skill(name:"Proform1",keyAbility:"CHA",useUntrained:false,showSubName:true),
-                new Skill(name:"Proform2",keyAbility:"CHA",useUntrained:false,showSubName:true),
-                new Skill(name:"Proform3",keyAbility:"CHA",useUntrained:false,showSubName:true),
-                new Skill(name:"Profession1",keyAbility:"WIS",useUntrained:false,showSubName:true),
-                new Skill(name:"Profession2",keyAbility:"WIS",useUntrained:false,showSubName:true),
-                new Skill(name:"Ride",keyAbility:"DEX"),
-                new Skill(name:"Search",keyAbility:"INT"),
-                new Skill(name:"Sense Motive",keyAbility:"WIS"),
-                new Skill(name:"Sleight of Hand",keyAbility:"DEX",armorCheck:true),
-                new Skill(name:"Spellcraft",keyAbility:"INT",useUntrained:false),
-                new Skill(name:"Spot",keyAbility:"WIS"),
-                new Skill(name:"Swim",keyAbility:"STR",armorCheck:true),
-                new Skill(name:"Tumble",keyAbility:"DEX",armorCheck:true),
-                new Skill(name:"Use Magic Device",keyAbility:"CHA",useUntrained:false),
-                new Skill(name:"Use Rope",keyAbility:"DEX"),
+                new(name:"Appraise",keyAbility:"INT"),
+                new(name:"Balance",keyAbility:"DEX",armorCheck:true),
+                new(name:"Bluff",keyAbility:"CHA"),
+                new(name:"Climb",keyAbility:"STR",armorCheck:true),
+                new(name:"Concentration",keyAbility:"CON"),
+                new(name:"Craft1",keyAbility:"INT",showSubName:true),
+                new(name:"Craft2",keyAbility:"INT",showSubName:true),
+                new(name:"Craft3",keyAbility:"INT",showSubName:true),
+                new(name:"Decipher Script",keyAbility:"INT",useUntrained:false),
+                new(name:"Diplomacy",keyAbility:"CHA"),
+                new(name:"Disable Device",keyAbility:"INT",useUntrained:false),
+                new(name:"Disguise",keyAbility:"CHA"),
+                new(name:"Escape Artist",keyAbility:"DEX",armorCheck:true),
+                new(name:"Forgery",keyAbility:"INT"),
+                new(name:"Gather Info",keyAbility:"CHA"),
+                new(name:"Handle Animal",keyAbility:"CHA"),
+                new(name:"Heal",keyAbility:"WIS"),
+                new(name:"Hide",keyAbility:"DEX",armorCheck:true),
+                new(name:"Intimidate",keyAbility:"CHA"),
+                new(name:"Jump",keyAbility:"STR",armorCheck:true),
+                new(name:"Knowledge1",keyAbility:"INT",showSubName:true),
+                new(name:"Knowledge2",keyAbility:"INT",showSubName:true),
+                new(name:"Knowledge3",keyAbility:"INT",showSubName:true),
+                new(name:"Knowledge4",keyAbility:"INT",showSubName:true),
+                new(name:"Knowledge5",keyAbility:"INT",showSubName:true),
+                new(name:"Listen",keyAbility:"WIS"),
+                new(name:"Move Silently",keyAbility:"CHA",armorCheck:true),
+                new(name:"Open Lock",keyAbility:"DEX",useUntrained:false),
+                new(name:"Perform1",keyAbility:"CHA",useUntrained:false,showSubName:true),
+                new(name:"Perform2",keyAbility:"CHA",useUntrained:false,showSubName:true),
+                new(name:"Perform3",keyAbility:"CHA",useUntrained:false,showSubName:true),
+                new(name:"Profession1",keyAbility:"WIS",useUntrained:false,showSubName:true),
+                new(name:"Profession2",keyAbility:"WIS",useUntrained:false,showSubName:true),
+                new(name:"Ride",keyAbility:"DEX"),
+                new(name:"Search",keyAbility:"INT"),
+                new(name:"Sense Motive",keyAbility:"WIS"),
+                new(name:"Sleight of Hand",keyAbility:"DEX",armorCheck:true),
+                new(name:"Spellcraft",keyAbility:"INT",useUntrained:false),
+                new(name:"Spot",keyAbility:"WIS"),
+                new(name:"Swim",keyAbility:"STR",armorCheck:true),
+                new(name:"Tumble",keyAbility:"DEX",armorCheck:true),
+                new(name:"Use Magic Device",keyAbility:"CHA",useUntrained:false),
+                new(name:"Use Rope",keyAbility:"DEX"),
             };
 
-            showInfoValues = new Dictionary<string, string>()
+            showInfoValues = new Dictionary<string, bool>()
             {
-                {"ALL","All" },
-                {"CharData","Top Info" },
-                {"Stats","Stats" },
-                {"HPAC","HP/AC" },
-                {"Saves","Saves" },
-                {"Skills","Skills" },
-                {"Att","Attacks" },
-                {"Gear","Gear" },
-                {"FSAL","Feats/Abilities/Langauge" },
-                {"Spells","Spells" }
+                
+                {"Top Info",true },
+                {"Stats", true},
+                { "HP/AC", true },
+                { "Saves", true },
+                { "Skills", true },
+                { "Attacks", true },
+                { "Gear", true },
+                { "Feats/Abilities/Langauge", true },
+                { "Spells", true },
+                {"Money" ,true}
             };
             bab = string.Empty;
             SpellRes = 0;
-            attacks = new List<AttackData>();
+            attacks = [];
             campaign = string.Empty;
             exp = 0;
             characterLvl = 1;
 
-            armor = new Gear();
-            armor.acType = ACType.Armor;
-            shield = new Gear();
-            shield.acType = ACType.Shield;
+            armor = new Gear
+            {
+                acType = ACType.Armor
+            };
+            shield = new Gear
+            {
+                acType = ACType.Shield
+            };
             protectionItems = [];
             otherPosessions = [];
             feats = [];
@@ -166,15 +172,40 @@ namespace BlazorThreeFiveCharSheet.Client.Models
             casterLvl = 0;
             baseSpellSave = 0;
             spellcastingStat = string.Empty;
-            spellsKnown = new Dictionary<int, int>() { { 0, 0 }, { 1, 0 }, { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, {7, 0 }, { 8, 0 },{ 9,0},};
+            spellsKnown = new Dictionary<int, int>() { { 0, 0 }, { 1, 0 }, { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 }, { 8, 0 }, { 9, 0 }, };
             spellSaveDcs = new Dictionary<int, int>() { { 0, 0 }, { 1, 0 }, { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 }, { 8, 0 }, { 9, 0 }, };
             spellsPerDay = new Dictionary<int, int>() { { 0, 0 }, { 1, 0 }, { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 }, { 8, 0 }, { 9, 0 }, };
             bonusSpells = new Dictionary<int, int>() { { 0, 0 }, { 1, 0 }, { 2, 0 }, { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 }, { 8, 0 }, { 9, 0 }, };
             spells = new Dictionary<int, List<string>>() { { 0, [] }, { 1, [] }, { 2, [] }, { 3, [] }, { 4, [] }, { 5, [] }, { 6, [] }, { 7, [] }, { 8, [] }, { 9, [] }, };
+            money = new Dictionary<string, int>()
+            {
+                {"CP", 0},
+                {"SP", 0},
+                {"GP", 0},
+                {"PP", 0}
+            };
+
+            loads = new Dictionary<string, decimal>()
+            {
+                { "Light Load", 0 },
+                { "Medium Load", 0 },
+                { "Heavy Load", 0 },
+                { "Lift Over Head", 0 },
+                { "Lift Off Ground", 0 },
+                { "Push Or Drag", 0 }
+            };
+            loadFormated = new Dictionary<string, string>()
+            {
+                { "Light Load",      Calculator.FormatLoad(this,"Light Load") },
+                { "Medium Load"    , Calculator.FormatLoad(this,"Medium Load")},
+                { "Heavy Load"     , Calculator.FormatLoad(this,"Heavy Load")},
+                { "Lift Over Head" , Calculator.FormatLoad(this,"Lift Over Head")},
+                { "Lift Off Ground", Calculator.FormatLoad(this,"Lift Off Ground")},
+                { "Push Or Drag"   , Calculator.FormatLoad(this,"Push Or Drag")}
+            };
         }
-        
-       
-        public string showInfo { get; set; }
+
+
         public string characterName { get; set; }
         public string player { get; set; }
         public string classLvlString { get; set; }
@@ -250,13 +281,13 @@ namespace BlazorThreeFiveCharSheet.Client.Models
         public int willMiscMod { get; set; }
         public int willTempMod { get; set; }
         public List<Skill> skillList { get; set; }
-        public Dictionary<string,string> showInfoValues { get; set; }
+        public Dictionary<string, bool> showInfoValues { get; set; }
         public string bab { get; set; }
-        public int SpellRes {  get; set; }
+        public int SpellRes { get; set; }
         public List<AttackData> attacks { get; set; }
         public string campaign { get; set; }
         public int exp { get; set; }
-        public int characterLvl { get; set; }  
+        public int characterLvl { get; set; }
         public Gear armor { get; set; }
         public Gear shield { get; set; }
         public List<Gear> protectionItems { get; set; }
@@ -268,18 +299,23 @@ namespace BlazorThreeFiveCharSheet.Client.Models
         public List<string> specialAbilities { get; set; }
         public List<string> languages { get; set; }
 
-        public int casterLvl { get;set; }
-        public int baseSpellSave {  get; set; }
+        public int casterLvl { get; set; }
+        public int baseSpellSave { get; set; }
         public string spellcastingStat { get; set; }
-        public Dictionary<int,int> spellsKnown { get; set; }
-        public Dictionary<int,int> spellSaveDcs { get; set; }
-        public Dictionary<int,int> spellsPerDay { get; set; }
-        public Dictionary<int,int> bonusSpells { get; set; }
-        public Dictionary<int,List<string>> spells {  get; set; }
+        public Dictionary<int, int> spellsKnown { get; set; }
+        public Dictionary<int, int> spellSaveDcs { get; set; }
+        public Dictionary<int, int> spellsPerDay { get; set; }
+        public Dictionary<int, int> bonusSpells { get; set; }
+        public Dictionary<int, List<string>> spells { get; set; }
+        public Dictionary<string, int> money { get; set; }
+        public Dictionary<string, decimal> loads { get; set; }
+        public Dictionary<string, string> loadFormated { get; set; }
+
+
         private int CalcArmorDexMod()
         {
             var returnValue = dexMod;
-            if(armor.maxDexMod.HasValue)
+            if (armor.maxDexMod.HasValue)
             {
                 if (dexMod > armor.maxDexMod.Value)
                     returnValue = armor.maxDexMod.Value;

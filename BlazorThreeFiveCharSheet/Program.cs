@@ -1,5 +1,6 @@
 using BlazorThreeFiveCharSheet.Client.Pages;
 using BlazorThreeFiveCharSheet.Components;
+using Microsoft.JSInterop;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,3 +33,4 @@ app.MapRazorComponents<App>()
     .AddAdditionalAssemblies(typeof(BlazorThreeFiveCharSheet.Client._Imports).Assembly);
 
 app.Run();
+

@@ -1,19 +1,37 @@
 ﻿@page "/Character"
 @rendermode InteractiveWebAssembly
+@inject IJSRuntime js
+
 <PageTitle>Character Sheet</PageTitle>
+
+@if (!string.IsNullOrWhiteSpace(error))
+{
+    <div class="alert alert-danger">
+        @error
+    </div>
+}
+<div style="width: 100%" class=" container border border-0">
+    <input type="button" class="btn btn-primary" onclick="@Save" value="Save" />
+    <label for="file-upload" class="custom-file-upload btn btn-primary" style="cursor: pointer;">
+        <InputFile OnChange="Load" id="file-upload" style="display:none"></InputFile>
+        Load
+    </label>
+    
+</div>
+<br />
 <div style="width: 100%" class=" container border border-2">
-    <InputRadioGroup Name="Info"  @bind-Value="model.showInfo" @bind-Value:after=logging>
+
         @foreach(var opt in model.showInfoValues.Keys)
         {
             @* <div class="form-check form-check-inline"> *@
-                <InputRadio TValue="string" Value="@opt" Name="Info" class="btn-check" id="@opt"></InputRadio>
-            <label for="@opt" class="btn btn-outline-primary">@model.showInfoValues[opt]</label>
+            <InputCheckbox @bind-value="model.showInfoValues[opt]" class="btn-check" id="@opt"></InputCheckbox>
+            <label for="@opt" class="btn btn-outline-primary">@opt</label>
             @* </div> *@
         }
-    </InputRadioGroup>
+
 </div>
 <div style="width: 100%" class=" container border border-2">
-    @if (model.showInfo == "ALL" || model.showInfo == "CharData")
+        @if (model.showInfoValues["Top Info"])
     {
         <div class="row">
             <div class="row">
@@ -86,7 +104,7 @@
             <div class="row">
                 <div class="col">
                     <div class="form-floating">
-                        <InputSelect class="form-select" @bind-Value="model.size" id="size">
+                        <InputSelect class="form-select" @bind-Value="model.size" @bind-Value:after=CalculateModifier id="size">
                             <option value=""></option>
                             <option value="S">Small</option>
                             <option value="M">Medium</option>
@@ -158,7 +176,7 @@
     }
   
     <div class="row">
-        @if (model.showInfo == "ALL" || model.showInfo == "Stats")
+            @if (model.showInfoValues["Stats"])
         {
             <div class="col-2">
                 <div class="form-floating">
@@ -190,7 +208,7 @@
             </div>
         }
  
-        @if (model.showInfo == "ALL" || model.showInfo == "HPAC")
+            @if (model.showInfoValues["HP/AC"])
         {
                 <div class="col-6">
                     <div class="row flex-nowrap">
@@ -281,7 +299,7 @@
 
 
     <div class="row">
-        @if (model.showInfo == "ALL" || model.showInfo == "Stats")
+            @if (model.showInfoValues["Stats"])
         {
             <div class="col-2">
                 <div class="form-floating">
@@ -313,7 +331,7 @@
         </div>
         }
  
-        @if (model.showInfo == "ALL" || model.showInfo == "HPAC")
+            @if (model.showInfoValues["HP/AC"])
         {
             <div class="col-2">
                 <div class="form-floating">
@@ -331,7 +349,7 @@
         </div>
         }
     </div>
-        @if (model.showInfo == "ALL" || model.showInfo == "Saves")
+        @if (model.showInfoValues["Saves"])
 
         {
             <br />
@@ -432,7 +450,7 @@
             </div>
         </div>
     }
-    @if (model.showInfo == "ALL" || model.showInfo == "Skills")
+        @if (model.showInfoValues["Skills"])
     {
         <br />
             <!--
@@ -512,7 +530,7 @@
         }
     }
  
-    @if (model.showInfo == "ALL" || model.showInfo == "Att")
+        @if (model.showInfoValues["Attacks"])
     {
         <br />
         <div class="row justify-content-start flex-nowrap">
@@ -578,7 +596,7 @@
         }
     }
     
-    @if (model.showInfo == "ALL" || model.showInfo == "Gear")
+        @if (model.showInfoValues["Gear"])
     {
         <div class="row">
             <div class="col  bg-dark text-light text-center">GEAR</div>
@@ -745,9 +763,21 @@
             </div>
         </div>
 
+        <div class="row justify-Content-center">
+            
+            @foreach (var key in model.loadFormated.Keys)
+            {
+                <div class="col-3">
+                    <div class="form-floating">
+                        <InputText Value="@model.loadFormated[key]" readonly ValueExpression=" () =>  model.loadFormated[key]" class="form-control"></InputText>
+                        <label>@key</label>
+                    </div>
+                </div>
+            }
+        </div>
     }
-    
-    @if (model.showInfo == "ALL" || model.showInfo == "FSAL")
+
+        @if (model.showInfoValues["Feats/Abilities/Langauge"])
     {
         <div class="row justify-content-center flex-nowrap">
             <div class="col-3 bg-dark text-light text-center mx-4">Feats<button @onclick="() => AddFeat()" class="btn btn-success btn-sm mx-4 py-0">+</button></div>
@@ -790,7 +820,7 @@
 
     }
 
-    @if (model.showInfo == "ALL" || model.showInfo == "Spells")
+        @if (model.showInfoValues["Spells"])
     {
         <br />
         <div class="row justify-content-center flex-nowrap">
@@ -853,11 +883,61 @@
             }
         </div>
     }
+
+        @if (model.showInfoValues["Money"])
+    {
+        <br />
+        <br />
+        <div class="row justify-content-start flex-nowrap border border-1 bg-dark text-light text-center">
+            <div class="col-12 ">Money</div>
+        </div>
+        <div class="row justify-content-start flex-nowrap border border-1">
+            <div class="col-6">
+                <div class="form-floating">
+                    <InputNumber class="form-control" @bind-Value='model.money["CP"]'></InputNumber>
+                    <label>CP</label>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-floating">
+                    <InputNumber class="form-control" @bind-Value='model.money["SP"]'></InputNumber>
+                    <label>SP</label>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-start flex-nowrap border border-1">
+            <div class="col-6">
+                <div class="form-floating">
+                    <InputNumber class="form-control" @bind-Value='model.money["GP"]'></InputNumber>
+                    <label>GP</label>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-floating">
+                    <InputNumber class="form-control" @bind-Value='model.money["PP"]'></InputNumber>
+                    <label>PP</label>
+                </div>
+            </div>
+        </div>
+
+        <input type="button" class="btn btn-outline-success" onclick="@ConvertMoney" value="Covert" />
+
+
+    }
 </div>
 
-
-
 @code {
+    private string error { get; set; } = string.Empty;
+    private bool isLoading { get; set; } = true;
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = false;
+        await CalculateModifier();
+    }
+    protected override void OnAfterRender(bool firstRender)
+    {
+        isLoading = false;
+    }
     #region Constant Values
     Dictionary<string, string> raceStatChanges = new Dictionary<string, string>
     {
@@ -884,6 +964,7 @@
         Console.WriteLine(model.spells[lvl]);
         return Task.CompletedTask;
     }
+
     private Task CalculateModifier()
     {
         //regular
@@ -912,6 +993,11 @@
         Calculator.TotalAC(model);
         Calculator.CalcSaves(model);
         Calculator.TotalSkills(model);
+        Calculator.CalcWightLoads(model);
+        foreach(var key in model.loadFormated.Keys)
+        {
+            model.loadFormated[key] = Calculator.FormatLoad(model, key);
+        }
         UpdateSpellDC();
         return Task.CompletedTask;
     }
@@ -1126,6 +1212,11 @@
         model.languages.Remove(lang);
         return Task.CompletedTask;
     }
+
+    private Task ConvertMoney()
+    {
+        return Task.CompletedTask;
+    }
     private Task UpdateSpellDC()
     {
         if(!string.IsNullOrWhiteSpace(model.spellcastingStat))
@@ -1143,6 +1234,35 @@
         return Task.CompletedTask;
     }
 
+    private async Task<Task> Save()
+    {
+        await FileUtil.SaveAs(js, $"{(string.IsNullOrWhiteSpace(model.characterName) ? "Character" : model.characterName)}{(string.IsNullOrWhiteSpace(model.player) ? "" : "-" + model.player)}-{(string.IsNullOrWhiteSpace(model.campaign) ? "" : "-"+model.campaign)}.txt", System.Text.Encoding.UTF8.GetBytes(JsonSerializer.Serialize(model)));
+        return Task.CompletedTask;
+    }
+    private async Task<Task> Load(InputFileChangeEventArgs e)
+    {
+        try
+        {
+            error = string.Empty;
+            using var memoryStream = new MemoryStream();
+            await e.File.OpenReadStream().CopyToAsync(memoryStream);
+            string fileData = Encoding.UTF8.GetString(memoryStream.ToArray());
+            if (!string.IsNullOrWhiteSpace(fileData))
+            {
+                var newModel = JsonSerializer.Deserialize<ThreeFiveSheet>(fileData);
+                if(newModel != null)
+                {
+                    model = newModel;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        
+        }
+        return Task.CompletedTask;
+    }
     private Task logging()
     {
         //Console.WriteLine(model.showInfo);
