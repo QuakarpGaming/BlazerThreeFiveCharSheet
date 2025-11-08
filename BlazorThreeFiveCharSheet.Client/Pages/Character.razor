@@ -56,39 +56,31 @@
                 <div class="row justify-content-start">
                     <div class="col-3">
                         <div class="form-floating">
-                            <InputText @bind-Value="model.classLvlString" id="ClassLVL" class="form-control"></InputText>
+                            <InputText @bind-Value="model.classLvlString" @bind-Value:after="resetClasslvlChangedFlag" id="ClassLVL" class="form-control"></InputText>
                             <label for="ClassLVL">Class And Level</label>
                         </div>
                     </div>
                     <div class="col-3">
                         <div class="form-floating">
-                            <InputSelect class="form-select" @bind-Value="model.race" @bind-Value:after=AlterStatsRace id="race">
-                                <option value=""></option>
-                                <option value="HUM">Human</option>
-                                <option value="ELF">Elf</option>
-                                <option value="DWF">Dwarf</option>
-                                <option value="GNO">Gnome</option>
-                                <option value="HEL">Half Elf</option>
-                                <option value="HOR">Half-Orc</option>
-                                <option value="HAF">Halflings</option>
-                            </InputSelect>
+                            <input class="form-control" list="Races" id="exampleDataList" @bind-value="model.race" @bind-value:after="@ResetRaceChangedFlag">
+                            <datalist id="Races">
+                                @foreach (var race in Races)
+                                {
+                                    <option value="@race"/>
+                                }
+                            </datalist>
                             <label for="race">Race</label>
                         </div>
                     </div>
                     <div class="col-3">
                         <div class="form-floating">
-                            <InputSelect class="form-select" @bind-Value="model.alignment" id="alignment">
-                                <option value=""></option>
-                                <option value="LG">Lawfull-Good</option>
-                                <option value="LN">Lawfull-Neutral</option>
-                                <option value="LE">LawFull-Evil</option>
-                                <option value="NG">Neutral-Good</option>
-                                <option value="TN">Neutral</option>
-                                <option value="NE">Neutral-Evil</option>
-                                <option value="CG">Chaotic-Good</option>
-                                <option value="CG">Chaotic-Neutral</option>
-                                <option value="CG">Chaotic-Evil</option>
-                            </InputSelect>
+                            <input class="form-control" list="Ali" id="exampleDataList" @bind-value="model.alignment">
+                            <datalist id="Ali">
+                                @foreach(var val in Alignments)
+                                {
+                                    <option value="@val"/>
+                                }
+                            </datalist>
                             <label for="alignment">Alignment</label>
                         </div>
                     </div>
@@ -104,13 +96,13 @@
             <div class="row">
                 <div class="col">
                     <div class="form-floating">
-                        <InputSelect class="form-select" @bind-Value="model.size" @bind-Value:after=CalculateModifier id="size">
-                            <option value=""></option>
-                            <option value="S">Small</option>
-                            <option value="M">Medium</option>
-                            <option value="L">Large</option>
-                            <option value="O">Other</option>
-                        </InputSelect>
+                        <input class="form-control" list="Size" id="exampleDataList" @bind-value="model.size">
+                        <datalist id="Size">
+                            @foreach (var val in Sizes)
+                            {
+                                <option value="@val" />
+                            }
+                        </datalist>
                         <label for="size">Size</label>
                     </div>
                 </div>
@@ -191,6 +183,22 @@
                     <InputNumber @bind-Value="model.con" @bind-Value:after=CalculateModifier id="con" class="form-control"></InputNumber>
                     <label for="con">Constitution (@model.conMod)</label>
                 </div>
+                <div class="form-floating">
+                    <InputNumber class="form-control" @bind-Value="model.wis" @bind-Value:after=CalculateModifier></InputNumber>
+                    <label for="wis">Wisdom (@model.wisMod)</label>
+                </div>
+                <div class="form-floating">
+                    <InputNumber @bind-Value="model.intel" @bind-Value:after=CalculateModifier id="int" class="form-control">></InputNumber>
+                    <label for="int">Intelligence (@model.intMod)</label>
+                </div>
+                <div class="form-floating">
+                    <InputNumber @bind-Value="model.cha" @bind-Value:after=CalculateModifier id="cha" class="form-control"></InputNumber>
+                    <label for="Cha">Charisma (@model.chaMod)</label>
+                </div>
+                @if (RaceChanged)
+                {
+                    <input type="button" class="btn btn-outline-success" onclick="@AlterStatsRace" value="Update Stats for Race" />
+                }
             </div>
             <div class="col-2">
                 <div class="form-floating">
@@ -204,6 +212,18 @@
                 <div class="form-floating">
                     <InputNumber @bind-Value="model.tempCon" @bind-Value:after=CalculateModifier id="con" class="form-control"></InputNumber>
                     <label for="con">Temp Con (@model.tempConMod)</label>
+                </div>
+                <div class="form-floating">
+                    <InputNumber class="form-control" @bind-Value="model.tempWis" @bind-Value:after=CalculateModifier></InputNumber>
+                    <label for="wis">Temp Wisdom (@model.tempWisMod)</label>
+                </div>
+                <div class="form-floating">
+                    <InputNumber @bind-Value="model.tempIntel" @bind-Value:after=CalculateModifier id="int" class="form-control">></InputNumber>
+                    <label for="int">Temp Intelligence (@model.tempIntMod)</label>
+                </div>
+                <div class="form-floating">
+                    <InputNumber @bind-Value="model.tempCha" @bind-Value:after=CalculateModifier id="cha" class="form-control"></InputNumber>
+                    <label for="Cha">Temp Charisma (@model.tempChaMod)</label>
                 </div>
             </div>
         }
@@ -292,63 +312,29 @@
                         </div>
                     </div>
                 </div>
+                <br />
+                <div class="col-4">
+                    <div class="form-floating">
+                        <InputNumber class="form-control" @bind-Value="model.acTouch" readonly disabled></InputNumber>
+                        <label>Touch AC</label>
+                    </div>
+                    <div class="form-floating">
+                        <InputNumber class="form-control" @bind-Value="model.acFF" readonly disabled></InputNumber>
+                        <label>Flat-Footed AC</label>
+                    </div>
+                    <div class="form-floating">
+                        <InputNumber class="form-control" @bind-Value="model.init" readonly disabled></InputNumber>
+                        <label>Initiative</label>
+                    </div>
+                </div>
             </div>
+            
         }
         
     </div>
 
 
-    <div class="row">
-            @if (model.showInfoValues["Stats"])
-        {
-            <div class="col-2">
-                <div class="form-floating">
-                <InputNumber class="form-control" @bind-Value="model.wis" @bind-Value:after=CalculateModifier></InputNumber>
-                <label for="wis">Wisdom (@model.wisMod)</label>
-            </div>
-            <div class="form-floating">
-                <InputNumber @bind-Value="model.intel" @bind-Value:after=CalculateModifier id="int" class="form-control">></InputNumber>
-                <label for="int">Intelligence (@model.intMod)</label>
-            </div>
-            <div class="form-floating">
-                <InputNumber @bind-Value="model.cha" @bind-Value:after=CalculateModifier id="cha" class="form-control"></InputNumber>
-                <label for="Cha">Charisma (@model.chaMod)</label>
-            </div>
-        </div>
-        <div class="col-2">
-            <div class="form-floating">
-                <InputNumber class="form-control" @bind-Value="model.tempWis" @bind-Value:after=CalculateModifier></InputNumber>
-                <label for="wis">Temp Wisdom (@model.tempWisMod)</label>
-            </div>
-            <div class="form-floating">
-                <InputNumber @bind-Value="model.tempIntel" @bind-Value:after=CalculateModifier id="int" class="form-control">></InputNumber>
-                <label for="int">Temp Intelligence (@model.tempIntMod)</label>
-            </div>
-            <div class="form-floating">
-                <InputNumber @bind-Value="model.tempCha" @bind-Value:after=CalculateModifier id="cha" class="form-control"></InputNumber>
-                <label for="Cha">Temp Charisma (@model.tempChaMod)</label>
-            </div>
-        </div>
-        }
- 
-            @if (model.showInfoValues["HP/AC"])
-        {
-            <div class="col-2">
-                <div class="form-floating">
-                <InputNumber class="form-control" @bind-Value="model.acTouch" readonly disabled></InputNumber>
-                <label>Touch AC</label>
-                </div>
-            <div class="form-floating">
-                <InputNumber class="form-control" @bind-Value="model.acFF" readonly disabled></InputNumber>
-                <label>Flat-Footed AC</label>
-            </div>
-            <div class="form-floating">
-                <InputNumber class="form-control" @bind-Value="model.init" readonly disabled></InputNumber>
-                <label>Initiative</label>
-            </div>
-        </div>
-        }
-    </div>
+
         @if (model.showInfoValues["Saves"])
 
         {
@@ -481,12 +467,58 @@
         @foreach(var skill in model.skillList)
         {
             <div class="row justify-content-start  flex-nowrap">
-                <div class="col-4 border border-1">
-                    <p>
-                        <InputCheckbox @bind-Value="skill.classSkill"></InputCheckbox>&nbsp;@Regex.Replace(skill.name,@"[0-9]","")&nbsp;
-                        <span hidden="@(skill.useUntrained == false)">&#x25A0;</span>
-                        <span hidden="@(skill.showSubName == false)">(<InputText @bind-Value="skill.subName"></InputText>)</span>
-                    </p>
+                <div class="col-4 border border-1 justify-content-start  flex-nowrap" style="display:ruby">
+                    <InputCheckbox @bind-Value="skill.classSkill"></InputCheckbox>&nbsp;@Regex.Replace(skill.name,@"[0-9]","")&nbsp;
+                    @if (skill.useUntrained)
+                    {
+                        @HttpUtility.HtmlDecode("&#x25A0;&nbsp;")
+                    }
+                    @if (skill.showSubName)
+                    {
+                        @HttpUtility.HtmlDecode("(&nbsp;")
+                        @if (skill.name.StartsWith("Craft"))
+                        {
+                            <input class="form-control form-control-sm" list="craft" id="exampleDataList" @bind="@skill.subName" style="max-width:130px;">
+                            <datalist id="craft">
+                                @foreach (var val in Crafts)
+                                {
+                                    <option value="@val" />
+                                }
+                            </datalist>
+                        }
+                        else if (skill.name.StartsWith("Knowledge"))
+                        {
+                            <input class="form-control form-control-sm" list="know" id="exampleDataList" @bind="@skill.subName" style="max-width:130px;">
+                            <datalist id="know">
+                                @foreach (var val in Knowledges)
+                                {
+                                    <option value="@val" />
+                                }
+                            </datalist>
+                        }
+                        else if (skill.name.StartsWith("Perform"))
+                        {
+                            <input class="form-control form-control-sm" list="Per" id="exampleDataList" @bind="@skill.subName" style="max-width:180px;">
+                            <datalist id="Per">
+                                @foreach (var val in Performs)
+                                {
+                                    <option value="@val" />
+                                }
+                            </datalist>
+                        }
+                        else
+                        {
+                            <input class="form-control form-control-sm" list="Pro" id="exampleDataList" @bind="@skill.subName" style="max-width:150px;">
+                            <datalist id="Pro">
+                                @foreach (var val in Professions)
+                                {
+                                    <option value="@val" />
+                                }
+                            </datalist>
+                        }
+                        @HttpUtility.HtmlDecode(")")
+
+                    }
                 </div>
                 <div class="col-1 border border-1">
                     <p class="text-center">@skill.keyAbility<span hidden="@(skill.armorCheck == false)">*</span></p>
@@ -536,7 +568,7 @@
         <div class="row justify-content-start flex-nowrap">
             <div class="col-4 my-auto">
                 <div class="form-floating">
-                    <InputText class="form-control" @bind-Value="model.bab" @bind-Value:after=CalculateAttackBonuses></InputText>
+                    <InputText class="form-control" @bind-Value="model.bab"></InputText>
                     <label>Base Attack Bonus</label>
                 </div>
             </div>
@@ -547,7 +579,16 @@
                 </div>
             </div>
         </div>
+        @if (classLvlChanged)
+        {
+            <br />
+            <input type="button" class="btn btn-success" onclick="@ParseClassLvl" value="Get Base Attack From Class And Level" />
+        }
+        <br />
+        <br />
         <input type="button" class="btn btn-outline-success" onclick="@AddAttack" value="Add Attack" />
+        <input type="button" class="btn btn-outline-success" onclick="@UpdateAttackBonuses" value="Calculate Attack Bonuses" />
+
         @foreach(var att in model.attacks)
         {
             <br />
@@ -556,12 +597,23 @@
 
             <div class="row justify-content-start flex-nowrap">
                 <div class="col-4 bg-dark text-light text-center px-2">Attack<button @onclick="() => RemoveAttack(att)" class="btn btn-danger btn-sm mx-2 py-0">X</button></div>
-                <div class="col-2 bg-dark text-light text-center px-2">Attack Bonus</div>
+                <div class="col-2 bg-dark text-light text-center px-2">Attack Bonus Stat</div>
+                <div class="col-2 bg-dark text-light text-center px-2">Attack Bonus<button @onclick="() => CalculateAttackBonus(att)" class="btn btn-primary btn-sm mx-2 py-0" title="Calculate This Attack Bonus">&#x2636;</button></div>
                 <div class="col-2 bg-dark text-light text-center px-2">Damage</div>
                 <div class="col-2 bg-dark text-light text-center px-2">Critical</div>
             </div>
             <div class="row justify-content-start flex-nowrap">
                 <div class="col-4 border border-2 px-2"><InputText @bind-Value="att.name" class="form-control"></InputText></div>
+                <div class="col-2 border border-2 px-2">
+                        <InputSelect class="form-select" list="Ali" id="exampleDataList" @bind-value="att.attackBonusStat">
+                            <option value="Str">Str</option>
+                            <option value="Dex">Dex</option>
+                            <option value="Con">Con</option>
+                            <option value="Wis">Wis</option>
+                            <option value="Int">Int</option>
+                            <option value="Cha">Cha</option>
+                        </InputSelect>
+                    </div>
                 <div class="col-2 border border-2 px-2"><InputText @bind-Value="att.attackBonus" class="form-control"></InputText></div>
                 <div class="col-2 border border-2 px-2"><InputText @bind-Value="att.dmg" class="form-control"></InputText></div>
                 <div class="col-2 border border-2 px-2"><InputText @bind-Value="att.crit" class="form-control"></InputText></div>
@@ -569,7 +621,7 @@
             <div class="row justify-content-start flex-nowrap">
                 <div class="col-2 bg-dark text-light text-center px-2">Range</div>
                 <div class="col-2 bg-dark text-light text-center px-2">Type</div>
-                <div class="col-6 bg-dark text-light text-center px-2">Notes</div>
+                <div class="col-8 bg-dark text-light text-center px-2">Notes</div>
             </div>
             <div class="row justify-content-start flex-nowrap">
                 <div class="col-2 border border-2 px-2"><InputNumber @bind-Value="att.range" class="form-control"></InputNumber></div>
@@ -583,21 +635,42 @@
                         <option value="BP">Bludgeoning and piercing</option>
                     </InputSelect>
                 </div>
-                <div class="col-6 border border-2 px-0"><InputText @bind-Value="att.notes" class="form-control"></InputText></div>
+                <div class="col-8 border border-2 px-0"><InputText @bind-Value="att.notes" class="form-control"></InputText></div>
             </div>
-            <div class="row justify-content-start flex-nowrap">
-                <div class="col-10 px-0 mx-0">
+            <button @onclick="() => AddAmmo(att)" class="btn btn-primary btn-sm mx-2 py-0" >Add Ammo</button>
+
+            
+                
+            @foreach( var ammo in att.ammo)
+            {
+             <div class="row justify-content-start flex-nowrap">
+                <div class="col-2">
                     <div class="form-floating">
-                        <InputTextArea @bind-Value="att.ammo" class="form-control"></InputTextArea>
-                        <label>Ammunition</label>
+                        <InputText @bind-Value="ammo.Name" class="form-control"></InputText>
+                        <label>Name</label>
+                    </div>
+                </div>
+                <div class="col-2">
+                    <div class="form-floating">
+                        <InputNumber @bind-Value="ammo.Qty" class="form-control"></InputNumber>
+                        <label>Qty.</label>
+                    </div>
+                </div>
+                <div class="col-8">
+                    <div class="form-floating">
+                        <InputTextArea @bind-Value="ammo.Notes" class="form-control"></InputTextArea>
+                        <label>Extra Properties</label>
                     </div>
                 </div>
             </div>
+            }
         }
     }
     
         @if (model.showInfoValues["Gear"])
     {
+        <br />
+        <br />
         <div class="row">
             <div class="col  bg-dark text-light text-center">GEAR</div>
         </div>
@@ -779,6 +852,8 @@
 
         @if (model.showInfoValues["Feats/Abilities/Langauge"])
     {
+        <br />
+        <br />
         <div class="row justify-content-center flex-nowrap">
             <div class="col-3 bg-dark text-light text-center mx-4">Feats<button @onclick="() => AddFeat()" class="btn btn-success btn-sm mx-4 py-0">+</button></div>
             <div class="col-3 bg-dark text-light text-center mx-4">Special Abilities<button @onclick="() => AddSA()" class="btn btn-success btn-sm mx-4 py-0">+</button></div>
@@ -822,6 +897,7 @@
 
         @if (model.showInfoValues["Spells"])
     {
+        <br />
         <br />
         <div class="row justify-content-center flex-nowrap">
             <div class="row bg-dark text-light text-center">
@@ -929,33 +1005,162 @@
 @code {
     private string error { get; set; } = string.Empty;
     private bool isLoading { get; set; } = true;
+    private bool RaceChanged { get; set; }
+    private bool classLvlChanged { get; set; }
+
+    #region Constant Values
+    private Regex GoodBAB = new Regex(@"(FIG|FIGHTER|BAR|BARBARIAN|PAL|PALADIN|RAN|RANGER)");
+    private Regex AvgBAB = new Regex(@"(BARD|DRU|DURID|MONK|MON|CLR|CLE|CLERIC|ROU|ROUGE)");
+    private Regex PoorBAB = new Regex(@"(SOR|WIZ|SORCERER|WIZARD)");
+    private List<string> Races = new List<string>()
+    {
+        "Human",
+        "Elf",
+        "Dwarf",
+        "Gnome",
+        "Half Elf",
+        "Half-Orc",
+        "Halflings",
+    };
+    private List<string> Alignments = new List<string>()
+    {
+        "Lawful-Good",
+        "Lawful-Neutral",
+        "LawFul-Evil",
+        "Neutral-Good",
+        "Neutral",
+        "Neutral-Evil",
+        "Chaotic-Good",
+        "Chaotic-Neutral",
+        "Chaotic-Evil"
+    };
+    private List<string> Sizes = new List<string>()
+    {
+        "Fine",
+        "Diminutive",
+        "Tiny",
+        "Small",
+        "Medium",
+        "Large",
+        "Huge",
+        "Gargantuan",
+        "Colossal"
+    };
+    private List<string> Crafts = new List<string>()
+    {
+        "Alchemy",
+        "Armor smithing",
+        "Basket weaving",
+        "Bookbinding",
+        "Bow making",
+        "Blacksmithing",
+        "Calligraphy",
+        "Carpentry",
+        "Cobbling",
+        "Gemcutting",
+        "Leather working",
+        "Locksmithing",
+        "Painting",
+        "Pottery",
+        "Sculpting",
+        "Shipmaking",
+        "Stonemasonry",
+        "Trapmaking",
+        "Weapons mithing",
+        "Weaving"
+    };
+
+    private List<string> Knowledges = new List<string>()
+    {
+        "Arcana",
+        "Architecture and engineering",
+        "Dungeoneering",
+        "Geography",
+        "History",
+        "Local",
+        "Nature",
+        "Nobility and Royalty",
+        "Religion",
+        "The Planes"
+    };
+
+    private List<string> Performs = new List<string>()
+    {
+        "Act",
+        "Comedy",
+        "Dance",
+        "Keyboard instruments",
+        "Oratory",
+        "Percussion instruments",
+        "String instruments",
+        "Wind instruments",
+        "Sing",
+    };
+    private List<string> Professions = new List<string>()
+    {
+        "Apothecary",
+        "Boater",
+        "Bookkeeper",
+        "Brewer",
+        "Cook",
+        "Driver",
+        "Farmer",
+        "Fisher",
+        "Guide",
+        "Herbalist",
+        "Herder",
+        "Hunter",
+        "Innkeeper",
+        "Lumberjack",
+        "Miller",
+        "Miner",
+        "Porter",
+        "Rancher",
+        "Sailor",
+        "Scribe",
+        "Siege Engineer",
+        "Stablehand",
+        "Tanner",
+        "Teamster",
+        "Woodcutter"   
+    };
+    Dictionary<string, string> raceStatChanges = new Dictionary<string, string>
+    {
+        {"Dwarf","CON,2,CHA,-2" },
+        {"Elf","DEX,2,CON,-2"},
+        {"Gnome","CON,2,STR,-2"},
+        {"Half-Orc","STR,2,INT,-2,CHA,-2"},
+        {"Halflings","DEX,2,STR,-2"},
+    };
+    #endregion
+    #region Page Life Cycle
     protected override async Task OnInitializedAsync()
     {
         isLoading = false;
+        RaceChanged = false;
+        classLvlChanged = false;
         await CalculateModifier();
     }
-    protected override void OnAfterRender(bool firstRender)
-    {
-        isLoading = false;
-    }
-    #region Constant Values
-    Dictionary<string, string> raceStatChanges = new Dictionary<string, string>
-    {
-        {"DWF","CON,2,CHA,-2" },
-        {"ELF","DEX,2,CON,-2"},
-        {"GNO","CON,2,STR,-2"},
-        {"HOR","STR,2,INT,-2,CHA,-2"},
-        {"HAF","DEX,2,STR,-2"},
-    };
+
 
     #endregion
     ThreeFiveSheet model = new ThreeFiveSheet();
-
+    private Task ResetRaceChangedFlag()
+    {
+        RaceChanged = true;
+        return Task.CompletedTask;
+    }
+    private Task resetClasslvlChangedFlag()
+    {
+        classLvlChanged = true;
+        return Task.CompletedTask;
+    }
     private Task AlterStatsRace()
     {
         SubtractRaceStats(model.lastRace);
         model.lastRace = model.race;
         AddRaceStats(model.race);
+        RaceChanged = false;
         return Task.CompletedTask;
     }
     private Task AddSpell(int lvl)
@@ -965,6 +1170,11 @@
         return Task.CompletedTask;
     }
 
+    private Task AddAmmo(AttackData att)
+    {
+        att.ammo.Add(new Ammo());
+        return Task.CompletedTask;
+    }
     private Task CalculateModifier()
     {
         //regular
@@ -1005,6 +1215,7 @@
 
     private void AddRaceStats(string race)
     {
+
         if (raceStatChanges.TryGetValue(race, out var changesStr))
         {
             string[] parts = changesStr.Split(',');
@@ -1044,6 +1255,7 @@
                 }
             }
         }
+        error = $"Your Race {race} is not in the programmed list for updating stats. YOU STATS HAVE NOT BE MODIFIED";
     }
 
     private void SubtractRaceStats(string race)
@@ -1140,10 +1352,6 @@
         Calculator.TotalSkills(model);
         return Task.CompletedTask;
     }
-    private Task CalculateAttackBonuses()
-    {
-        return Task.CompletedTask;
-    }
     private Task AddAttack()
     {
         model.attacks.Add(new AttackData());
@@ -1180,6 +1388,65 @@
         UpdateAcValues();
         return Task.CompletedTask;
     }
+    private Task ParseClassLvl()
+    {
+        classLvlChanged = false;
+        var totals = new List<int>();
+
+        var parts = model.classLvlString.ToUpper().Split("/");
+        for(int i = 0; i<parts.Length; i++)
+        {
+            var classlvlPart = parts[i].Split(" ");
+            var maxBab = 0;
+            if (classlvlPart.Length == 2 && int.TryParse(classlvlPart[1], out int bab))
+            {
+                if(GoodBAB.IsMatch(classlvlPart[0]))
+                {
+                    maxBab = bab;
+                }
+                else if(AvgBAB.IsMatch(classlvlPart[0]))
+                {
+                    maxBab = (bab + (bab / 2)) / 2;
+                }
+                else if(PoorBAB.IsMatch(classlvlPart[0]))
+                {
+                    maxBab = (bab / 2);
+                }
+
+                getNextBab(maxBab, 0, totals);
+
+                model.bab = string.Join("/", totals.Select(n => n.ToString()).ToArray());
+
+            }
+        }
+        return Task.CompletedTask;
+    }
+    private void getNextBab(int bab,int postion,List<int> babList)
+    {
+        if(babList.Count <= postion)
+        {
+            babList.Add(0);
+        }
+
+        babList[postion] += bab;
+
+        if(bab - 5 > 0)
+        {
+            getNextBab(bab - 5, ++postion, babList);
+        }
+    }
+    private Task UpdateAttackBonuses()
+    {
+        Calculator.CalculateAttBonus(model, model.attacks);
+        return Task.CompletedTask;
+    }
+    private Task CalculateAttackBonus(AttackData att)
+    {
+
+        Calculator.CalculateAttBonus(model, att);
+        return Task.CompletedTask;
+    }
+
 
     private Task AddFeat()
     {

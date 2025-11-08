@@ -11,7 +11,8 @@
             this.range = 5;
             this.type = string.Empty;
             this.notes = string.Empty;
-            this.ammo = string.Empty;
+            this.ammo = [];
+            this.attackBonusStat = string.Empty;
         }
 
         public string name { get; set; }
@@ -21,6 +22,7 @@
         public int range { get; set; }
         public string type { get; set; }
         public string notes {  get; set; }
-        public string ammo { get; set; }
+        public List<Ammo> ammo { get; set; }
+        public string attackBonusStat { get; set; }
     }
 }

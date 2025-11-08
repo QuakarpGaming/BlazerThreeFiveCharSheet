@@ -257,5 +257,75 @@ namespace BlazorThreeFiveCharSheet.Client.Shared
                 yield return digit;
             }
         }
+        public static void CalculateAttBonus(ThreeFiveSheet model, List<AttackData>  atts)
+        {
+            for (int i = 0; i < atts.Count; i++)
+            {
+                CalculateAttBonus(model, atts[i]);
+            }
+        }
+        public static void CalculateAttBonus(ThreeFiveSheet model, AttackData att)
+        {
+            var totals = new List<int>();
+            if (int.TryParse(model.bab, out int singleBab))
+            {
+                totals.Add(singleBab);
+            }
+            else
+            {
+                var parts = model.bab.Replace("+", string.Empty).Split('/');
+                foreach (var bonus in parts)
+                {
+                    if (int.TryParse(bonus, out int intBonus))
+                    {
+                        totals.Add(intBonus);
+                    }
+                }
+            }
+
+            if (totals.Count == 0)
+            {
+                totals.Add(0);
+            }
+
+            if (!string.IsNullOrWhiteSpace(att.attackBonusStat))
+            {
+                switch (att.attackBonusStat)
+                {
+                    case "Str":
+                        for (int i = 0; i < totals.Count; i++)
+                        {
+                            totals[i] += model.strMod;
+                        }
+                        att.attackBonus = string.Join("/", totals.Select(n => n.ToString()).ToArray());
+                        break;
+                    case "Dex":
+                        for (int i = 0; i < totals.Count; i++)
+                        {
+                            totals[i] += model.dexMod;
+                        }
+                        att.attackBonus = string.Join("/", totals.Select(n => n.ToString()).ToArray());
+                        break;
+                    case "Con":
+                        att.attackBonus = (totals[0] + model.conMod).ToString();
+                        break;
+                    case "Wis":
+                        att.attackBonus = (totals[0] + model.wisMod).ToString();
+                        break;
+                    case "Int":
+                        att.attackBonus = (totals[0] + model.intMod).ToString();
+                        break;
+                    case "Cha":
+                        att.attackBonus = (totals[0] + model.chaMod).ToString();
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else
+            {
+                att.attackBonus = string.Join("/", totals.Select(n => n.ToString()).ToArray());
+            }
+        }
     }
 }
